@@ -6,7 +6,7 @@ namespace Fohjin.DDD.Configuration
 {
     public class DomainDatabaseBootStrapper
     {
-        public const string dataBaseFile = "domainDataBase.db3";
+        public static readonly string dataBaseFile = Path.GetTempPath() + "domainDataBase.db3";
 
         public static void BootStrap()
         {

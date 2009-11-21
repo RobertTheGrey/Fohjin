@@ -10,7 +10,8 @@ namespace Fohjin.DDD.Configuration
 {
     public class ReportingDatabaseBootStrapper
     {
-        public const string dataBaseFile = "reportingDataBase.db3";
+        public static readonly string dataBaseFile = Path.GetTempPath() + "reportingDataBase.db3";
+
         private readonly List<Type> _dtos = new List<Type>
         {
             typeof(ClientReport), 
