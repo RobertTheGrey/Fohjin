@@ -1,3 +1,4 @@
+using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using Fohjin.DDD.Bus;
@@ -13,7 +14,7 @@ namespace Fohjin.DDD.Configuration
 {
     public class DomainRegistry : Registry
     {
-        private const string sqLiteConnectionString = "Data Source=domainDataBase.db3";
+        private static string sqLiteConnectionString = string.Format("Data Source={0}", Path.GetTempPath() + "domainDataBase.db3");
 
         public DomainRegistry()
         {

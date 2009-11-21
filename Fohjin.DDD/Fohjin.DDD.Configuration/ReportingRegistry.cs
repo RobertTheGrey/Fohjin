@@ -1,3 +1,4 @@
+using System.IO;
 using Fohjin.DDD.Reporting;
 using Fohjin.DDD.Reporting.Infrastructure;
 using StructureMap.Configuration.DSL;
@@ -6,7 +7,7 @@ namespace Fohjin.DDD.Configuration
 {
     public class ReportingRegistry : Registry
     {
-        private const string sqLiteConnectionString = "Data Source=reportingDataBase.db3";
+        private static readonly string sqLiteConnectionString = string.Format("Data Source={0}", Path.GetTempPath() + "reportingDataBase.db3");
 
         public ReportingRegistry()
         {
