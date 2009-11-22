@@ -1,4 +1,3 @@
-using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using Fohjin.DDD.Bus;
@@ -14,7 +13,7 @@ namespace Fohjin.DDD.Configuration
 {
     public class DomainRegistry : Registry
     {
-        private static string sqLiteConnectionString = string.Format("Data Source={0}", Path.GetTempPath() + "domainDataBase.db3");
+        private const string sqLiteConnectionString = "Data Source=domainDataBase.db3";
 
         public DomainRegistry()
         {
@@ -29,22 +28,22 @@ namespace Fohjin.DDD.Configuration
             ForRequestedType<IFormatter>()
                 .TheDefault.Is.ConstructedBy(x => new BinaryFormatter());
             
-            ForRequestedType<IDomainEventStorage>()
-                .TheDefault.Is.OfConcreteType<DomainEventStorage>()
+            ForRequestedType<IDomainEventStorage<IDomainEvent>>()
+                .TheDefault.Is.OfConcreteType<DomainEventStorage<IDomainEvent>>()
                 .WithCtorArg("sqLiteConnectionString").EqualTo(sqLiteConnectionString);
 
-            ForRequestedType<IIdentityMap>()
-                .TheDefault.Is.OfConcreteType<EventStoreIdentityMap>();
-            
-            ForRequestedType<IEventStoreUnitOfWork>()
-                .CacheBy(InstanceScope.ThreadLocal)
-                .TheDefault.Is.OfConcreteType<EventStoreUnitOfWork>();
+            ForRequestedType<IIdentityMap<IDomainEvent>>()
+                .TheDefault.Is.OfConcreteType<EventStoreIdentityMap<IDomainEvent>>();
+
+            ForRequestedType<IEventStoreUnitOfWork<IDomainEvent>>()
+                .CacheBy(InstanceScope.Hybrid)
+                .TheDefault.Is.OfConcreteType<EventStoreUnitOfWork<IDomainEvent>>();
             
             ForRequestedType<IUnitOfWork>()
-                .TheDefault.Is.ConstructedBy(x => x.GetInstance<IEventStoreUnitOfWork>());
-            
-            ForRequestedType<IDomainRepository>()
-                .TheDefault.Is.OfConcreteType<DomainRepository>();
+                .TheDefault.Is.ConstructedBy(x => x.GetInstance<IEventStoreUnitOfWork<IDomainEvent>>());
+
+            ForRequestedType<IDomainRepository<IDomainEvent>>()
+                .TheDefault.Is.OfConcreteType<DomainRepository<IDomainEvent>>();
         }
     }
 }
