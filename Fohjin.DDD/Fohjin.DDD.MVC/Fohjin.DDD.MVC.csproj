@@ -37,9 +37,6 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="System.ComponentModel.DataAnnotations">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -113,6 +110,10 @@
       <Project>{7757DA0F-CD51-4753-95C8-8632177AA60E}</Project>
       <Name>Fohjin.DDD.CommandHandlers</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Fohjin.DDD.Commands\Fohjin.DDD.Commands.csproj">
+      <Project>{58D61FA0-D67F-4D72-81EA-2D709356AF95}</Project>
+      <Name>Fohjin.DDD.Commands</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Fohjin.DDD.Configuration\Fohjin.DDD.Configuration.csproj">
       <Project>{CF50373D-3EB9-492D-A88F-70D7D6756DFF}</Project>
       <Name>Fohjin.DDD.Configuration</Name>
@@ -136,6 +137,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\Site.css" />
+    <Content Include="Views\Client\ClientChangeName.aspx" />
     <Content Include="Views\Client\Create.aspx" />
     <Content Include="Views\Client\Details.aspx" />
     <Content Include="Views\Client\List.aspx" />

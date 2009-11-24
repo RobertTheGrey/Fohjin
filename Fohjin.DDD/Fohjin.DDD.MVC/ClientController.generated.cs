@@ -34,8 +34,8 @@ namespace Fohjin.DDD.MVC.Controllers {
         }
 
         [NonAction]
-        public System.Web.Mvc.ActionResult Edit() {
-            return new T4MVC_ActionResult(Name, Actions.Edit);
+        public System.Web.Mvc.ActionResult ClientChangeName() {
+            return new T4MVC_ActionResult(Name, Actions.ClientChangeName);
         }
 
 
@@ -50,7 +50,7 @@ namespace Fohjin.DDD.MVC.Controllers {
             public readonly string Index = "Index";
             public readonly string Details = "Details";
             public readonly string Create = "Create";
-            public readonly string Edit = "Edit";
+            public readonly string ClientChangeName = "ClientChangeName";
         }
 
 
@@ -59,6 +59,7 @@ namespace Fohjin.DDD.MVC.Controllers {
         public ViewNames Views { get { return s_views; } }
         [CompilerGenerated]
         public class ViewNames {
+            public readonly string ClientChangeName = "ClientChangeName";
             public readonly string Create = "Create";
             public readonly string Details = "Details";
             public readonly string List = "List";
@@ -87,22 +88,21 @@ namespace T4MVC {
             return callInfo;
         }
 
-        public override System.Web.Mvc.ActionResult Create(System.Web.Mvc.FormCollection collection) {
+        public override System.Web.Mvc.ActionResult Create(Fohjin.DDD.Reporting.Dto.ClientDetailsReport clientDetailsReport) {
             var callInfo = new T4MVC_ActionResult("Client", Actions.Create);
-            callInfo.RouteValues.Add("collection", collection);
+            callInfo.RouteValues.Add("clientDetailsReport", clientDetailsReport);
             return callInfo;
         }
 
-        public override System.Web.Mvc.ActionResult Edit(int id) {
-            var callInfo = new T4MVC_ActionResult("Client", Actions.Edit);
+        public override System.Web.Mvc.ActionResult ClientChangeName(System.Guid id) {
+            var callInfo = new T4MVC_ActionResult("Client", Actions.ClientChangeName);
             callInfo.RouteValues.Add("id", id);
             return callInfo;
         }
 
-        public override System.Web.Mvc.ActionResult Edit(int id, System.Web.Mvc.FormCollection collection) {
-            var callInfo = new T4MVC_ActionResult("Client", Actions.Edit);
-            callInfo.RouteValues.Add("id", id);
-            callInfo.RouteValues.Add("collection", collection);
+        public override System.Web.Mvc.ActionResult ClientChangeName(Fohjin.DDD.Reporting.Dto.ClientReport clientReport) {
+            var callInfo = new T4MVC_ActionResult("Client", Actions.ClientChangeName);
+            callInfo.RouteValues.Add("clientReport", clientReport);
             return callInfo;
         }
 

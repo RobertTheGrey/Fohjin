@@ -190,7 +190,7 @@ namespace Fohjin.DDD.Reporting.Infrastructure
 
                 using (var sqLiteDataReader = sqliteCommand.ExecuteReader())
                 {
-                    var dtoConstructor = dtoType.GetConstructors().OrderBy(x => x.GetParameters().Count()).FirstOrDefault();
+                    var dtoConstructor = dtoType.GetConstructors().OrderBy(x => x.GetParameters().Count()).LastOrDefault();
 
                     while (sqLiteDataReader.Read())
                     {

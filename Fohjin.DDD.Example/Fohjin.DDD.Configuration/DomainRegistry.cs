@@ -29,22 +29,22 @@ namespace Fohjin.DDD.Configuration
             ForRequestedType<IFormatter>()
                 .TheDefault.Is.ConstructedBy(x => new BinaryFormatter());
             
-            ForRequestedType<IDomainEventStorage<IDomainEvent>>()
-                .TheDefault.Is.OfConcreteType<DomainEventStorage<IDomainEvent>>()
+            ForRequestedType<IDomainEventStorage>()
+                .TheDefault.Is.OfConcreteType<DomainEventStorage>()
                 .WithCtorArg("sqLiteConnectionString").EqualTo(sqLiteConnectionString);
 
-            ForRequestedType<IIdentityMap<IDomainEvent>>()
-                .TheDefault.Is.OfConcreteType<EventStoreIdentityMap<IDomainEvent>>();
-
-            ForRequestedType<IEventStoreUnitOfWork<IDomainEvent>>()
-                .CacheBy(InstanceScope.Hybrid)
-                .TheDefault.Is.OfConcreteType<EventStoreUnitOfWork<IDomainEvent>>();
+            ForRequestedType<IIdentityMap>()
+                .TheDefault.Is.OfConcreteType<EventStoreIdentityMap>();
+            
+            ForRequestedType<IEventStoreUnitOfWork>()
+                .CacheBy(InstanceScope.ThreadLocal)
+                .TheDefault.Is.OfConcreteType<EventStoreUnitOfWork>();
             
             ForRequestedType<IUnitOfWork>()
-                .TheDefault.Is.ConstructedBy(x => x.GetInstance<IEventStoreUnitOfWork<IDomainEvent>>());
-
-            ForRequestedType<IDomainRepository<IDomainEvent>>()
-                .TheDefault.Is.OfConcreteType<DomainRepository<IDomainEvent>>();
+                .TheDefault.Is.ConstructedBy(x => x.GetInstance<IEventStoreUnitOfWork>());
+            
+            ForRequestedType<IDomainRepository>()
+                .TheDefault.Is.OfConcreteType<DomainRepository>();
         }
     }
 }
