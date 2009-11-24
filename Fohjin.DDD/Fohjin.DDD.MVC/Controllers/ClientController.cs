@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
 using Fohjin.DDD.Bus;
+using Fohjin.DDD.Commands;
 using Fohjin.DDD.Reporting;
 using Fohjin.DDD.Reporting.Dto;
 
@@ -8,8 +10,8 @@ namespace Fohjin.DDD.MVC.Controllers
 {
     public partial class ClientController : Controller
     {
+        private readonly IBus _bus;
         private readonly IReportingRepository _reportingRepository;
-        private IBus _bus;
 
         public ClientController(IBus bus, IReportingRepository reportingRepository)
         {
@@ -46,24 +48,37 @@ namespace Fohjin.DDD.MVC.Controllers
         // POST: /Client/Create
 
         [HttpPost]
-        public virtual ActionResult Create(FormCollection collection)
+        public virtual ActionResult Create(ClientDetailsReport clientDetailsReport)
         {
             try
             {
-                
-
-                return RedirectToAction("Index");
+                ModelState["Id"].Errors.Clear();
+                if (ModelState.IsValid)
+                {
+                    var newClient = new CreateClientCommand(Guid.NewGuid(),
+                                                         clientDetailsReport.ClientName,
+                                                         clientDetailsReport.Street,
+                                                         clientDetailsReport.StreetNumber,
+                                                         clientDetailsReport.PostalCode,
+                                                         clientDetailsReport.City,
+                                                         clientDetailsReport.PhoneNumber);
+                    _bus.Publish(newClient);
+                    _bus.Commit();
+                    _reportingRepository.GetByExample<ClientDetailsReport>(new {newClient.Id});
+                    return RedirectToAction("Index");
+                }
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                ModelState.AddModelError("*", string.Format("Aww - SNAP! We didn't see this coming: {0}", ex.Message));
             }
+            return View();
         }
 
         //
         // GET: /Client/Edit/5
 
-        public virtual ActionResult Edit(int id)
+        public virtual ActionResult ClientChangeName(Guid id)
         {
             return View();
         }
@@ -72,18 +87,24 @@ namespace Fohjin.DDD.MVC.Controllers
         // POST: /Client/Edit/5
 
         [HttpPost]
-        public virtual ActionResult Edit(int id, FormCollection collection)
+        public virtual ActionResult ClientChangeName(ClientReport clientReport)
         {
             try
             {
-                // TODO: Add update logic here
-
-                return RedirectToAction("Index");
+                ModelState["Id"].Errors.Clear();
+                if (ModelState.IsValid)
+                {
+                    _bus.Publish(new ChangeClientNameCommand(clientReport.Id, clientReport.Name));
+                    _bus.Commit();
+                    _reportingRepository.GetByExample<ClientDetailsReport>(new {clientReport.Id});
+                    return RedirectToAction("Index");
+                }
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                ModelState.AddModelError("*", string.Format("Aww - SNAP! We didn't see this coming: {0}", ex.Message));
             }
+            return View();
         }
     }
 }

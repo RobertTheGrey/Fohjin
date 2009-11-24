@@ -6,6 +6,14 @@ namespace Fohjin.DDD.MVC
 {
     public class MvcApplication : HttpApplication
     {
+        protected void Application_Start()
+        {
+            AreaRegistration.RegisterAllAreas();
+
+            RegisterRoutes(RouteTable.Routes);
+            RegisterIoC();
+        }
+
         public static void RegisterRoutes(RouteCollection routes)
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
@@ -15,15 +23,6 @@ namespace Fohjin.DDD.MVC
                 "{controller}/{action}/{id}", // URL with parameters
                 new {controller = "Client", action = "Index", id = ""} // Parameter defaults
                 );
-        }
-
-        protected void Application_Start()
-        {
-            AreaRegistration.RegisterAllAreas();
-
-            RegisterRoutes(RouteTable.Routes);
-
-            RegisterIoC();
         }
 
         private static void RegisterIoC()

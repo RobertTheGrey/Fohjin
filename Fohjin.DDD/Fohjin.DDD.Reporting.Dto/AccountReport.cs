@@ -9,6 +9,8 @@ namespace Fohjin.DDD.Reporting.Dto
         public string AccountName { get; private set; }
         public string AccountNumber { get; private set; }
 
+        public AccountReport(){}
+
         public AccountReport(Guid id, Guid clientDetailsId, string accountName, string accountNumber)
         {
             Id = id;

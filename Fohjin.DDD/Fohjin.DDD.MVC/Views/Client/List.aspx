@@ -25,6 +25,7 @@
             <td>
             
                 <%= Html.ActionLink("Edit", "Edit", new { id=item.Id }) %> |
+                <%= Html.ActionLink("Change Client Name", "ClientChangeName", new { id=item.Id }) %> |
                 <%= Html.ActionLink("Details", "Details", new { id=item.Id  })%>
             </td>
             <td>

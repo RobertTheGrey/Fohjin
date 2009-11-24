@@ -4,8 +4,10 @@ namespace Fohjin.DDD.Reporting.Dto
 {
     public class ClientReport
     {
-        public Guid Id { get; private set; }
-        public string Name { get; private set; }
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+
+        public ClientReport(){}
 
         public ClientReport(Guid id, string name)
         {

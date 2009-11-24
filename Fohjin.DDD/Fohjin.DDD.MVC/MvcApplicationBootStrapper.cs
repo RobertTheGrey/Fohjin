@@ -16,17 +16,17 @@ namespace Fohjin.DDD.MVC
 
             ObjectFactory.Initialize(
                 container =>
-                    {
-                        container.Scan(scanner =>
-                                           {
-                                               scanner.TheCallingAssembly();
-                                               scanner.WithDefaultConventions();
-                                               scanner.AddAllTypesOf<IController>();
-                                           });
-                        container.AddRegistry<DomainRegistry>();
-                        container.AddRegistry<ReportingRegistry>();
-                        container.AddRegistry<ServicesRegister>();
-            });
+                {
+                    container.Scan(scanner =>
+                                       {
+                                           scanner.TheCallingAssembly();
+                                           scanner.WithDefaultConventions();
+                                           scanner.AddAllTypesOf<IController>();
+                                       });
+                    container.AddRegistry<DomainRegistry>();
+                    container.AddRegistry<ReportingRegistry>();
+                    container.AddRegistry<ServicesRegister>();
+                });
             ObjectFactory.AssertConfigurationIsValid();
 
             RegisterCommandHandlersInMessageRouter.BootStrap();
@@ -45,7 +45,7 @@ namespace Fohjin.DDD.MVC
         {
             protected override IController GetControllerInstance(RequestContext requestContext, Type controllerType)
             {
-                return ObjectFactory.GetInstance(controllerType) as IController;
+                return controllerType != null ? ObjectFactory.GetInstance(controllerType) as IController : null;
             }
         }
 

@@ -37,7 +37,7 @@ namespace Fohjin.DDD.Configuration
                 .TheDefault.Is.OfConcreteType<EventStoreIdentityMap>();
             
             ForRequestedType<IEventStoreUnitOfWork>()
-                .CacheBy(InstanceScope.Hybrid)
+                .CacheBy(InstanceScope.ThreadLocal)
                 .TheDefault.Is.OfConcreteType<EventStoreUnitOfWork>();
             
             ForRequestedType<IUnitOfWork>()
