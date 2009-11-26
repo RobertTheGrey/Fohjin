@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web.Mvc;
 using Fohjin.DDD.Bus;
 using Fohjin.DDD.Commands;
@@ -19,33 +20,22 @@ namespace Fohjin.DDD.MVC.Controllers
             _reportingRepository = reportingRepository;
         }
 
-        //
-        // GET: /Client/
-
         public virtual ActionResult Index()
         {
             IEnumerable<ClientReport> clients = _reportingRepository.GetByExample<ClientReport>(null);
             return View(Views.List, clients);
         }
 
-        //
-        // GET: /Client/Details/5
-
-        public virtual ActionResult Details(int id)
+        public virtual ActionResult Details(Guid id)
         {
-            return View();
+            var client = _reportingRepository.GetByExample<ClientDetailsReport>(new { id }).FirstOrDefault();
+            return View(client);
         }
-
-        //
-        // GET: /Client/Create
 
         public virtual ActionResult Create()
         {
             return View();
         }
-
-        //
-        // POST: /Client/Create
 
         [HttpPost]
         public virtual ActionResult Create(ClientDetailsReport clientDetailsReport)
@@ -64,7 +54,7 @@ namespace Fohjin.DDD.MVC.Controllers
                                                          clientDetailsReport.PhoneNumber);
                     _bus.Publish(newClient);
                     _bus.Commit();
-                    _reportingRepository.GetByExample<ClientDetailsReport>(new {newClient.Id});
+                    _reportingRepository.GetByExample<ClientDetailsReport>(new { newClient.Id });
                     return RedirectToAction("Index");
                 }
             }
@@ -75,28 +65,22 @@ namespace Fohjin.DDD.MVC.Controllers
             return View();
         }
 
-        //
-        // GET: /Client/Edit/5
-
         public virtual ActionResult ClientChangeName(Guid id)
         {
-            return View();
+            var client = _reportingRepository.GetByExample<ClientReport>(new { id }).FirstOrDefault();
+            return View(client);
         }
-
-        //
-        // POST: /Client/Edit/5
 
         [HttpPost]
         public virtual ActionResult ClientChangeName(ClientReport clientReport)
         {
             try
             {
-                ModelState["Id"].Errors.Clear();
                 if (ModelState.IsValid)
                 {
                     _bus.Publish(new ChangeClientNameCommand(clientReport.Id, clientReport.Name));
                     _bus.Commit();
-                    _reportingRepository.GetByExample<ClientDetailsReport>(new {clientReport.Id});
+                    _reportingRepository.GetByExample<ClientDetailsReport>(new { clientReport.Id });
                     return RedirectToAction("Index");
                 }
             }

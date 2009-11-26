@@ -77,7 +77,7 @@ namespace T4MVC {
             return callInfo;
         }
 
-        public override System.Web.Mvc.ActionResult Details(int id) {
+        public override System.Web.Mvc.ActionResult Details(System.Guid id) {
             var callInfo = new T4MVC_ActionResult("Client", Actions.Details);
             callInfo.RouteValues.Add("id", id);
             return callInfo;
