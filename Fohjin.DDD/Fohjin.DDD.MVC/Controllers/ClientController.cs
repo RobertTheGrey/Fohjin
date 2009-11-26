@@ -22,14 +22,17 @@ namespace Fohjin.DDD.MVC.Controllers
 
         public virtual ActionResult Index()
         {
-            IEnumerable<ClientReport> clients = _reportingRepository.GetByExample<ClientReport>(null);
-            return View(Views.List, clients);
+            return RedirectToAction(Views.List);
+        }
+
+        public virtual ActionResult List()
+        {
+            return View(Views.List, GetClientList<ClientReport>());
         }
 
         public virtual ActionResult Details(Guid id)
         {
-            var client = _reportingRepository.GetByExample<ClientDetailsReport>(new { id }).FirstOrDefault();
-            return View(client);
+            return View(GetClient<ClientDetailsReport>(id));
         }
 
         public virtual ActionResult Create()
@@ -46,49 +49,112 @@ namespace Fohjin.DDD.MVC.Controllers
                 if (ModelState.IsValid)
                 {
                     var newClient = new CreateClientCommand(Guid.NewGuid(),
-                                                         clientDetailsReport.ClientName,
-                                                         clientDetailsReport.Street,
-                                                         clientDetailsReport.StreetNumber,
-                                                         clientDetailsReport.PostalCode,
-                                                         clientDetailsReport.City,
-                                                         clientDetailsReport.PhoneNumber);
+                                                            clientDetailsReport.ClientName,
+                                                            clientDetailsReport.Street,
+                                                            clientDetailsReport.StreetNumber,
+                                                            clientDetailsReport.PostalCode,
+                                                            clientDetailsReport.City,
+                                                            clientDetailsReport.PhoneNumber);
                     _bus.Publish(newClient);
                     _bus.Commit();
-                    _reportingRepository.GetByExample<ClientDetailsReport>(new { newClient.Id });
-                    return RedirectToAction("Index");
+                    return RedirectToAction(Views.List);
                 }
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("*", string.Format("Aww - SNAP! We didn't see this coming: {0}", ex.Message));
+                ReportError(ex.Message);
             }
             return View();
         }
 
         public virtual ActionResult ClientChangeName(Guid id)
         {
-            var client = _reportingRepository.GetByExample<ClientReport>(new { id }).FirstOrDefault();
-            return View(client);
+            return View(GetClient<ClientReport>(id));
         }
 
         [HttpPost]
-        public virtual ActionResult ClientChangeName(ClientReport clientReport)
+        public virtual ActionResult ClientChangeName(ClientReport client)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    _bus.Publish(new ChangeClientNameCommand(clientReport.Id, clientReport.Name));
-                    _bus.Commit();
-                    _reportingRepository.GetByExample<ClientDetailsReport>(new { clientReport.Id });
-                    return RedirectToAction("Index");
+                    PublishAndCommit(new ChangeClientNameCommand(client.Id, client.Name));
+                    return RedirectToAction(Views.List);
                 }
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("*", string.Format("Aww - SNAP! We didn't see this coming: {0}", ex.Message));
+                ReportError(ex.Message);
             }
-            return View();
+            return View(client);
+        }
+
+        public virtual ActionResult ClientHasMoved(Guid id)
+        {
+            return View(GetClient<ClientDetailsReport>(id));
+        }
+
+        [HttpPost]
+        public virtual ActionResult ClientHasMoved(ClientDetailsReport client)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    PublishAndCommit(new ClientIsMovingCommand(client.Id, client.Street, client.StreetNumber, client.PostalCode, client.City));
+                    return RedirectToAction(Views.Details, new {id = client.Id});
+                }
+            }
+            catch (Exception ex)
+            {
+                ReportError(ex.Message);
+            }
+            return View(client);
+        }
+
+        public virtual ActionResult ClientChangedPhoneNumber(Guid id)
+        {
+            return View(GetClient<ClientDetailsReport>(id));
+        }
+
+        [HttpPost]
+        public virtual ActionResult ClientChangedPhoneNumber(ClientDetailsReport client)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    PublishAndCommit(new ChangeClientPhoneNumberCommand(client.Id, client.PhoneNumber));
+                    return RedirectToAction(Views.Details, new {id = client.Id});
+                }
+            }
+            catch (Exception ex)
+            {
+                ReportError(ex.Message);
+            }
+            return View(client);
+        }
+
+        private IEnumerable<T> GetClientList<T>() where T : class
+        {
+            return _reportingRepository.GetByExample<T>(null);
+        }
+
+        private T GetClient<T>(Guid id) where T : class
+        {
+            return _reportingRepository.GetByExample<T>(new {id}).FirstOrDefault();
+        }
+
+        private void PublishAndCommit(object message)
+        {
+            _bus.Publish(message);
+            _bus.Commit();
+        }
+
+        private void ReportError(string message)
+        {
+            ModelState.AddModelError("*", string.Format("Aww - SNAP! We didn't see this one coming: {0}", message));
         }
     }
 }

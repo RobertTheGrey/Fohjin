@@ -17,6 +17,6 @@
     </fieldset>
     <% } %>
     <div>
-        <%=Html.ActionLink("Back to List", "Index") %>
+        <%=Html.ActionLink("Back to List", MVC.Client.List()) %>
     </div>
 </asp:Content>
