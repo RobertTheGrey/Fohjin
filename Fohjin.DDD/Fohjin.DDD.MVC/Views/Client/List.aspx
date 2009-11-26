@@ -24,7 +24,6 @@
                 <%= Html.ActionLink("More Details", MVC.Client.Details(item.Id))%>
                 |
                 <%= Html.ActionLink("Change Name", MVC.Client.ClientChangeName(item.Id)) %>
-                |
             </td>
         </tr>
         <% } %>

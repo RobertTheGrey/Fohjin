@@ -17,7 +17,7 @@
             <div id="menucontainer">
             
                 <ul id="menu">              
-                    <li><%= Html.ActionLink("Client", "Index", "Client")%></li>
+                    <li><%= Html.ActionLink("Client List", MVC.Client.Index())%></li>
                 </ul>
             
             </div>

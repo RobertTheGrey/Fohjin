@@ -137,7 +137,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\Site.css" />
+    <Content Include="Views\Client\ClientChangedPhoneNumber.aspx" />
     <Content Include="Views\Client\ClientChangeName.aspx" />
+    <Content Include="Views\Client\ClientHasMoved.aspx" />
     <Content Include="Views\Client\Create.aspx" />
     <Content Include="Views\Client\Details.aspx" />
     <Content Include="Views\Client\List.aspx" />

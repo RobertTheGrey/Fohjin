@@ -6,13 +6,14 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
     <h2>
         Client Details</h2>
-    <fieldset>
-        <legend>Fields</legend>
         <%=Html.DisplayForModel() %>
-    </fieldset>
     <p>
         <%= Html.ActionLink("Change Name", MVC.Client.ClientChangeName(Model.Id)) %>
         |
-        <%=Html.ActionLink("Back to List", "Index") %>
+        <%= Html.ActionLink("Change Address", MVC.Client.ClientHasMoved(Model.Id)) %>
+        |
+        <%= Html.ActionLink("Change Phone Number", MVC.Client.ClientChangedPhoneNumber(Model.Id)) %>
+        |
+        <%=Html.ActionLink("Back to List", MVC.Client.Index()) %>
     </p>
 </asp:Content>

@@ -38,6 +38,16 @@ namespace Fohjin.DDD.MVC.Controllers {
             return new T4MVC_ActionResult(Name, Actions.ClientChangeName);
         }
 
+        [NonAction]
+        public System.Web.Mvc.ActionResult ClientHasMoved() {
+            return new T4MVC_ActionResult(Name, Actions.ClientHasMoved);
+        }
+
+        [NonAction]
+        public System.Web.Mvc.ActionResult ClientChangedPhoneNumber() {
+            return new T4MVC_ActionResult(Name, Actions.ClientChangedPhoneNumber);
+        }
+
 
         [CompilerGenerated]
         public readonly string Name = "Client";
@@ -48,9 +58,12 @@ namespace Fohjin.DDD.MVC.Controllers {
         [CompilerGenerated]
         public class ActionNames {
             public readonly string Index = "Index";
+            public readonly string List = "List";
             public readonly string Details = "Details";
             public readonly string Create = "Create";
             public readonly string ClientChangeName = "ClientChangeName";
+            public readonly string ClientHasMoved = "ClientHasMoved";
+            public readonly string ClientChangedPhoneNumber = "ClientChangedPhoneNumber";
         }
 
 
@@ -59,7 +72,9 @@ namespace Fohjin.DDD.MVC.Controllers {
         public ViewNames Views { get { return s_views; } }
         [CompilerGenerated]
         public class ViewNames {
+            public readonly string ClientChangedPhoneNumber = "ClientChangedPhoneNumber";
             public readonly string ClientChangeName = "ClientChangeName";
+            public readonly string ClientHasMoved = "ClientHasMoved";
             public readonly string Create = "Create";
             public readonly string Details = "Details";
             public readonly string List = "List";
@@ -74,6 +89,11 @@ namespace T4MVC {
 
         public override System.Web.Mvc.ActionResult Index() {
             var callInfo = new T4MVC_ActionResult("Client", Actions.Index);
+            return callInfo;
+        }
+
+        public override System.Web.Mvc.ActionResult List() {
+            var callInfo = new T4MVC_ActionResult("Client", Actions.List);
             return callInfo;
         }
 
@@ -100,9 +120,33 @@ namespace T4MVC {
             return callInfo;
         }
 
-        public override System.Web.Mvc.ActionResult ClientChangeName(Fohjin.DDD.Reporting.Dto.ClientReport clientReport) {
+        public override System.Web.Mvc.ActionResult ClientChangeName(Fohjin.DDD.Reporting.Dto.ClientReport client) {
             var callInfo = new T4MVC_ActionResult("Client", Actions.ClientChangeName);
-            callInfo.RouteValues.Add("clientReport", clientReport);
+            callInfo.RouteValues.Add("client", client);
+            return callInfo;
+        }
+
+        public override System.Web.Mvc.ActionResult ClientHasMoved(System.Guid id) {
+            var callInfo = new T4MVC_ActionResult("Client", Actions.ClientHasMoved);
+            callInfo.RouteValues.Add("id", id);
+            return callInfo;
+        }
+
+        public override System.Web.Mvc.ActionResult ClientHasMoved(Fohjin.DDD.Reporting.Dto.ClientDetailsReport client) {
+            var callInfo = new T4MVC_ActionResult("Client", Actions.ClientHasMoved);
+            callInfo.RouteValues.Add("client", client);
+            return callInfo;
+        }
+
+        public override System.Web.Mvc.ActionResult ClientChangedPhoneNumber(System.Guid id) {
+            var callInfo = new T4MVC_ActionResult("Client", Actions.ClientChangedPhoneNumber);
+            callInfo.RouteValues.Add("id", id);
+            return callInfo;
+        }
+
+        public override System.Web.Mvc.ActionResult ClientChangedPhoneNumber(Fohjin.DDD.Reporting.Dto.ClientDetailsReport client) {
+            var callInfo = new T4MVC_ActionResult("Client", Actions.ClientChangedPhoneNumber);
+            callInfo.RouteValues.Add("client", client);
             return callInfo;
         }
 
