@@ -11,36 +11,7 @@
        {%>
     <fieldset>
         <legend>Fields</legend>
-        <p>
-            <%= Html.LabelFor(model => model.ClientName) %>
-            <%= Html.TextBoxFor(model => model.ClientName) %>
-            <%= Html.ValidationMessageFor(model => model.ClientName) %>
-        </p>
-        <p>
-            <%= Html.LabelFor(model => model.Street) %>
-            <%= Html.TextBoxFor(model => model.Street) %>
-            <%= Html.ValidationMessageFor(model => model.Street) %>
-        </p>
-        <p>
-            <%= Html.LabelFor(model => model.StreetNumber) %>
-            <%= Html.TextBoxFor(model => model.StreetNumber) %>
-            <%= Html.ValidationMessageFor(model => model.StreetNumber) %>
-        </p>
-        <p>
-            <%= Html.LabelFor(model => model.PostalCode) %>
-            <%= Html.TextBoxFor(model => model.PostalCode) %>
-            <%= Html.ValidationMessageFor(model => model.PostalCode) %>
-        </p>
-        <p>
-            <%= Html.LabelFor(model => model.City) %>
-            <%= Html.TextBoxFor(model => model.City) %>
-            <%= Html.ValidationMessageFor(model => model.City) %>
-        </p>
-        <p>
-            <%= Html.LabelFor(model => model.PhoneNumber) %>
-            <%= Html.TextBoxFor(model => model.PhoneNumber) %>
-            <%= Html.ValidationMessageFor(model => model.PhoneNumber) %>
-        </p>
+        <%=Html.EditorForModel() %>
         <p>
             <input type="submit" value="Create" />
         </p>
