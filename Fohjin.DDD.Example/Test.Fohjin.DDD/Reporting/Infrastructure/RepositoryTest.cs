@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Linq;
 using Fohjin.DDD.Configuration;
 using Fohjin.DDD.Reporting.Dto;
@@ -12,7 +13,7 @@ namespace Test.Fohjin.DDD.Reporting.Infrastructure
     public class RepositoryTest
     {
         private SQLiteReportingRepository _repository;
-        private const string dataBaseFile = "reportingDataBase.db3";
+        private static readonly string dataBaseFile = Path.GetTempPath() + "reportingDataBase.db3";
 
         [SetUp]
         public void SetUp()
