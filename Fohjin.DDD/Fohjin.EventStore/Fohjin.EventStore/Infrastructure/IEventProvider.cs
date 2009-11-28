@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Collections.Generic;
 using Castle.Core.Interceptor;
-using Fohjin.EventStore.Configuration;
 
 namespace Fohjin.EventStore.Infrastructure
 {
@@ -20,18 +19,21 @@ namespace Fohjin.EventStore.Infrastructure
     public class EventProvider : IEventProvider, IInterceptor
     {
         private readonly Type _hostType;
-        private readonly EventProcessorCache _eventProcessorCache;
+        private readonly IEventRegistrator _eventRegistrator;
+        private readonly ICacheRegisteredEvents _cacheRegisteredEvents;
         private readonly List<IDomainEvent> _appliedEvents;
         private readonly Dictionary<string, object> _internalState;
+        private Dictionary<Type, List<Action<object, Dictionary<string, object>>>> _registeredEventHandlers;
 
         public Guid Id { get; protected set; }
         public int Version { get; protected set; }
         public int EventVersion { get; protected set; }
 
-        public EventProvider(Type hostType, EventProcessorCache eventProcessorCache)
+        public EventProvider(Type hostType, IEventRegistrator eventRegistrator, ICacheRegisteredEvents cacheRegisteredEvents)
         {
             _hostType = hostType;
-            _eventProcessorCache = eventProcessorCache;
+            _eventRegistrator = eventRegistrator;
+            _cacheRegisteredEvents = cacheRegisteredEvents;
             EventVersion = 0;
             _appliedEvents = new List<IDomainEvent>();
             _internalState = new Dictionary<string, object>();
@@ -56,7 +58,8 @@ namespace Fohjin.EventStore.Infrastructure
                 .ToList()
                 .ForEach(domainEvent => apply(domainEvent.GetType(), domainEvent));
 
-            EventVersion = Version = domainEvents.Last().EventVersion;
+            Version = domainEvents.Last().EventVersion;
+            EventVersion = Version;
         }
 
         void IEventProvider.UpdateVersion(int version)
@@ -76,16 +79,22 @@ namespace Fohjin.EventStore.Infrastructure
                 InterceptApplyMethod(invocation);
                 return;
             }
-            if (IsInternalStateGetProperty(invocation))
+            if (IsInternalStateProperty(invocation))
             {
-                InterceptInternalStateGetProperty(invocation);
+                InterceptInternalStateProperty(invocation);
                 return;
             }
-            if (IsInternalStateSetProperty(invocation))
-            {
-                InterceptInternalStateSetProperty(invocation);
-            }
             invocation.Proceed();
+        }
+
+        public void RegisterEventHandlers(object proxy)
+        {
+            _registeredEventHandlers = _cacheRegisteredEvents.Get(_hostType);
+            if (_registeredEventHandlers != null)
+                return;
+
+            _registeredEventHandlers = _eventRegistrator.RegisterEventHandlers(_hostType, proxy);
+            _cacheRegisteredEvents.Add(_hostType, _registeredEventHandlers);
         }
 
         private static bool IsApplyMethod(IInvocation invocation)
@@ -103,7 +112,7 @@ namespace Fohjin.EventStore.Infrastructure
             _appliedEvents.Add(domainEvent);
         }
 
-        private bool IsInternalStateGetProperty(IInvocation invocation)
+        private bool IsInternalStateProperty(IInvocation invocation)
         {
             return
                 invocation.Method.DeclaringType == _hostType &&
@@ -111,32 +120,18 @@ namespace Fohjin.EventStore.Infrastructure
                 _internalState.ContainsKey(invocation.Method.Name.Substring(4));
         }
 
-        private void InterceptInternalStateGetProperty(IInvocation invocation)
+        private void InterceptInternalStateProperty(IInvocation invocation)
         {
             invocation.ReturnValue = _internalState[invocation.Method.Name.Substring(4)];
         }
 
-        private bool IsInternalStateSetProperty(IInvocation invocation)
-        {
-            return
-                invocation.Method.DeclaringType == _hostType &&
-                invocation.Method.Name.StartsWith("set_");
-        }
-
-        private static void InterceptInternalStateSetProperty(IInvocation invocation)
-        {
-            throw new IlligalStateAssignmentException(string.Format("Internal state is not allowed to be altered directly using property '{0}' and should always be done through the publishing of an event!", invocation.Method.Name.Substring(4)));
-        }
-
         private void apply(Type eventType, IDomainEvent domainEvent)
         {
-            IEnumerable<EventProcessor> eventProcessors; 
-            if (!_eventProcessorCache.TryGetEventProcessorsFor(eventType, out eventProcessors))
-                throw new UnregisteredDomainEventException(string.Format("The requested class '{0}' is not registered as a domain event", eventType.FullName));
+            List<Action<object, Dictionary<string, object>>> handlers;
+            if (!_registeredEventHandlers.TryGetValue(domainEvent.GetType(), out handlers))
+                throw new UnregisteredDomainEventException(string.Format("The requested domain event '{0}' is not registered in '{1}'", eventType.FullName, GetType().FullName));
 
-            eventProcessors
-                .ToList()
-                .ForEach(eventProcessor => eventProcessor.ProcessorEventProperty(domainEvent, _internalState));
+            handlers.ForEach(handler => handler(domainEvent, _internalState));
         }
     }
 }
