@@ -27,9 +27,14 @@ namespace Fohjin.EventStore.Reflection
 
         public IEnumerable<EventProcessor> BuildEventProcessors(Type registeredEvent)
         {
+<<<<<<< HEAD
             return _eventPropertyLocator
                 .RetrieveDomainEventProperties(registeredEvent)
                 .Select(eventProperty => new EventProcessor(registeredEvent, eventProperty, ProcessEventProperty(registeredEvent, eventProperty)));
+=======
+            var eventProperties = _eventPropertyLocator.RetrieveDomainEventProperties(registeredEvent);
+            return eventProperties.Select(eventProperty => new EventProcessor(registeredEvent, eventProperty, ProcessEventProperty(registeredEvent, eventProperty)));
+>>>>>>> Refactoring to the PreProcessor now it takes events instead of entities. So now there is no need to discover events anymore (at least not from the entities) bringing the required methods back to one.
         }
 
         private Action<object, Dictionary<string, object>> ProcessEventProperty(Type registeredEvent, PropertyInfo eventProperty)
