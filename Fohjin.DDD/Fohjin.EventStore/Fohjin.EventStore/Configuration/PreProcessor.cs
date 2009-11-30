@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Fohjin.EventStore.Reflection;
 
 namespace Fohjin.EventStore.Configuration
@@ -35,8 +34,12 @@ namespace Fohjin.EventStore.Configuration
 
         private void ProcessEvent(Type eventType)
         {
+<<<<<<< HEAD
+            _eventProcessorCache.RegisterEventProcessors(eventType, _eventAccessor.BuildEventProcessors(eventType));
+=======
             var eventProcessors = _eventAccessor.BuildEventProcessors(eventType);
             _eventProcessorCache.RegisterEventProcessors(eventType, eventProcessors);
+>>>>>>> Refactoring to the PreProcessor now it takes events instead of entities. So now there is no need to discover events anymore (at least not from the entities) bringing the required methods back to one.
         }
     }
 }

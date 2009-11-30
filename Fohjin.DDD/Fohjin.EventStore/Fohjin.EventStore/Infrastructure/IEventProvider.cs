@@ -56,8 +56,7 @@ namespace Fohjin.EventStore.Infrastructure
                 .ToList()
                 .ForEach(domainEvent => apply(domainEvent.GetType(), domainEvent));
 
-            Version = domainEvents.Last().EventVersion;
-            EventVersion = Version;
+            EventVersion = Version = domainEvents.Last().EventVersion;
         }
 
         void IEventProvider.UpdateVersion(int version)
@@ -137,7 +136,11 @@ namespace Fohjin.EventStore.Infrastructure
 
             eventProcessors
                 .ToList()
+<<<<<<< HEAD
+                .ForEach(eventProcessor => eventProcessor.ProcessorEventProperty(domainEvent, _internalState));
+=======
                 .ForEach(eventProcessor => eventProcessor.EventPropertyProcessor(domainEvent, _internalState));
+>>>>>>> Refactoring to the PreProcessor now it takes events instead of entities. So now there is no need to discover events anymore (at least not from the entities) bringing the required methods back to one.
         }
     }
 }
