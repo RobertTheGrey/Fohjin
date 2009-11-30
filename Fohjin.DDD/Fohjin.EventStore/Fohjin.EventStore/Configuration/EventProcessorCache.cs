@@ -17,11 +17,16 @@ namespace Fohjin.EventStore.Configuration
             return _cache.TryGetValue(domainEventType, out eventProcessors);
         }
 
-        public void RegisterEventProcessors(Type domainEventType, IEnumerable<EventProcessor> eventProcessors)
+        public void RegisterEvent(Type domainEventType)
         {
             if (_cache.ContainsKey(domainEventType))
                 return;
 
+            _cache.Add(domainEventType, new List<EventProcessor>());
+        }
+
+        public void RegisterEventProcessors(Type domainEventType, IEnumerable<EventProcessor> eventProcessors)
+        {
             _cache.Add(domainEventType, eventProcessors);
         }
     }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Fohjin.EventStore.Reflection;
 
 namespace Fohjin.EventStore.Configuration
@@ -34,7 +35,8 @@ namespace Fohjin.EventStore.Configuration
 
         private void ProcessEvent(Type eventType)
         {
-            _eventProcessorCache.RegisterEventProcessors(eventType, _eventAccessor.BuildEventProcessors(eventType));
+            var eventProcessors = _eventAccessor.BuildEventProcessors(eventType);
+            _eventProcessorCache.RegisterEventProcessors(eventType, eventProcessors);
         }
     }
 }
