@@ -17,18 +17,13 @@ using System.Web.Mvc.Ajax;
 using System.Web.Mvc.Html;
 using System.Web.Routing;
 using T4MVC;
-namespace T4MVC {
+namespace T4MVC.Client {
     [CompilerGenerated]
     public class SharedController {
 
         static readonly ViewNames s_views = new ViewNames();
         public ViewNames Views { get { return s_views; } }
         public class ViewNames {
-            static readonly _DisplayTemplates s_DisplayTemplates = new _DisplayTemplates();
-            public _DisplayTemplates DisplayTemplates { get { return s_DisplayTemplates; } }
-            public partial class _DisplayTemplates{
-                public readonly string @object = "~/Views/Shared/DisplayTemplates/object.ascx";
-            }
         }
     }
 

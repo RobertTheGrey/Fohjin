@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -19,7 +20,7 @@ namespace Test.Fohjin.DDD.Domain.Repositories
     [TestFixture]
     public class ClosedAccountRepositoryTest
     {
-        private const string dataBaseFile = "domainDataBase.db3";
+        private static readonly string dataBaseFile = Path.GetTempPath() + "domainDataBase.db3";
 
         private IDomainRepository<IDomainEvent> _repository;
         private DomainEventStorage<IDomainEvent> _domainEventStorage;

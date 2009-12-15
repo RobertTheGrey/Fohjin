@@ -1,3 +1,4 @@
+using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using Fohjin.DDD.Bus;
@@ -16,7 +17,7 @@ namespace Test.Fohjin.DDD.Domain.Repositories
     [TestFixture]
     public class clientRepositoryTest
     {
-        private const string dataBaseFile = "domainDataBase.db3";
+        private static readonly string dataBaseFile = Path.GetTempPath() + "domainDataBase.db3";
 
         private IDomainRepository<IDomainEvent> _repository;
         private DomainEventStorage<IDomainEvent> _domainEventStorage;

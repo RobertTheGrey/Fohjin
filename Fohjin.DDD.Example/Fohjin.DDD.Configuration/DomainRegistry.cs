@@ -1,3 +1,4 @@
+using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using Fohjin.DDD.Bus;
@@ -13,7 +14,7 @@ namespace Fohjin.DDD.Configuration
 {
     public class DomainRegistry : Registry
     {
-        private const string sqLiteConnectionString = "Data Source=domainDataBase.db3";
+        private static readonly string sqLiteConnectionString = string.Format("Data Source={0}", Path.GetTempPath() + "domainDataBase.db3");
 
         public DomainRegistry()
         {
@@ -36,7 +37,7 @@ namespace Fohjin.DDD.Configuration
                 .TheDefault.Is.OfConcreteType<EventStoreIdentityMap<IDomainEvent>>();
 
             ForRequestedType<IEventStoreUnitOfWork<IDomainEvent>>()
-                .CacheBy(InstanceScope.Hybrid)
+                .CacheBy(InstanceScope.ThreadLocal)
                 .TheDefault.Is.OfConcreteType<EventStoreUnitOfWork<IDomainEvent>>();
             
             ForRequestedType<IUnitOfWork>()

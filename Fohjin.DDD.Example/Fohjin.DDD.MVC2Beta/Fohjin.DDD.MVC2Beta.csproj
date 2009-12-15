@@ -31,6 +31,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="StructureMap, Version=2.5.3.0, Culture=neutral, PublicKeyToken=e60ad81abae3c223, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\StructureMap\StructureMap.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.ComponentModel.DataAnnotations">
@@ -41,6 +45,10 @@
     </Reference>
     <Reference Include="System.Data.DataSetExtensions">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.SQLite, Version=1.0.65.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\sqlite\bin\System.Data.SQLite.DLL</HintPath>
     </Reference>
     <Reference Include="System.Web.Mvc, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -61,9 +69,46 @@
     <Reference Include="System.Web.Mobile" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Areas\Client\AreaRegistration.cs" />
+    <Compile Include="Areas\Client\Controllers\ChangeNameController.cs" />
+    <Compile Include="Areas\Client\Controllers\CreateController.cs" />
+    <Compile Include="Areas\Client\Controllers\DetailsController.cs" />
+    <Compile Include="Areas\Client\Controllers\ChangeAddressController.cs" />
+    <Compile Include="Areas\Client\Controllers\ChangePhoneNumberController.cs" />
+    <Compile Include="Areas\Client\Controllers\ListController.cs" />
+    <Compile Include="BaseController.generated.cs">
+      <DependentUpon>T4MVC.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Client.ChangeAddressController.generated.cs">
+      <DependentUpon>T4MVC.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Client.ChangeNameController.generated.cs">
+      <DependentUpon>T4MVC.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Client.ChangePhoneNumberController.generated.cs">
+      <DependentUpon>T4MVC.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Client.CreateController.generated.cs">
+      <DependentUpon>T4MVC.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Client.DetailsController.generated.cs">
+      <DependentUpon>T4MVC.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Client.ListController.generated.cs">
+      <DependentUpon>T4MVC.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Client.SharedController.generated.cs">
+      <DependentUpon>T4MVC.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="HomeController.generated.cs">
+      <DependentUpon>T4MVC.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MvcApplicationBootStrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SharedController.generated.cs">
       <DependentUpon>T4MVC.tt</DependentUpon>
@@ -75,7 +120,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\Site.css" />
     <Content Include="Global.asax" />
+    <Content Include="Views\Home\Show.aspx" />
     <Content Include="Web.config" />
     <Content Include="Scripts\jquery-1.3.2.js" />
     <Content Include="Scripts\jquery-1.3.2.min.js" />
@@ -92,19 +139,62 @@
     <Content Include="Views\Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Areas\Client\Views\ChangeAddress\Show.aspx" />
+    <Content Include="Areas\Client\Views\ChangeName\Show.aspx" />
+    <Content Include="Areas\Client\Views\ChangePhoneNumber\Show.aspx" />
+    <Content Include="Areas\Client\Views\Create\Show.aspx" />
+    <Content Include="Areas\Client\Views\Details\Show.aspx" />
+    <Content Include="Areas\Client\Views\List\Show.aspx" />
+    <Content Include="Areas\Client\Views\Web.config" />
     <None Include="T4MVC.settings.t4" />
     <None Include="T4MVC.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>T4MVC.cs</LastGenOutput>
     </None>
+    <Content Include="Views\Shared\DisplayTemplates\object.ascx" />
+    <Content Include="Views\Shared\Site.Master" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Controllers\" />
+    <ProjectReference Include="..\Fohjin.DDD.Bus\Fohjin.DDD.Bus.csproj">
+      <Project>{809E2C9E-8ACD-40D5-86C8-43256C3D8AA8}</Project>
+      <Name>Fohjin.DDD.Bus</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Fohjin.DDD.CommandHandlers\Fohjin.DDD.CommandHandlers.csproj">
+      <Project>{7757DA0F-CD51-4753-95C8-8632177AA60E}</Project>
+      <Name>Fohjin.DDD.CommandHandlers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Fohjin.DDD.Commands\Fohjin.DDD.Commands.csproj">
+      <Project>{58D61FA0-D67F-4D72-81EA-2D709356AF95}</Project>
+      <Name>Fohjin.DDD.Commands</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Fohjin.DDD.Configuration\Fohjin.DDD.Configuration.csproj">
+      <Project>{CF50373D-3EB9-492D-A88F-70D7D6756DFF}</Project>
+      <Name>Fohjin.DDD.Configuration</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Fohjin.DDD.EventHandlers\Fohjin.DDD.EventHandlers.csproj">
+      <Project>{2A96D452-7D1D-4118-B3D4-8EF543D1FBCB}</Project>
+      <Name>Fohjin.DDD.EventHandlers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Fohjin.DDD.Reporting.Dto\Fohjin.DDD.Reporting.Dto.csproj">
+      <Project>{44666AF0-AC7A-486E-AD1F-49FD0573ED43}</Project>
+      <Name>Fohjin.DDD.Reporting.Dto</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Fohjin.DDD.Reporting\Fohjin.DDD.Reporting.csproj">
+      <Project>{0E86D5C6-929D-4304-A00D-ADC9FB2AFE77}</Project>
+      <Name>Fohjin.DDD.Reporting</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Fohjin.DDD.Services\Fohjin.DDD.Services.csproj">
+      <Project>{B2428304-1BF2-4BCB-B250-7D09E536560A}</Project>
+      <Name>Fohjin.DDD.Services</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Areas\Client\Models\" />
+    <Folder Include="Areas\Client\Views\Shared\" />
     <Folder Include="Models\" />
-    <Folder Include="Views\Shared\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v9.0\WebApplications\Microsoft.WebApplication.targets" />

@@ -20,10 +20,25 @@ using T4MVC;
 
 [CompilerGenerated]
 public static class MVC {
+    static readonly ClientClass s_Client = new ClientClass();
+    public static ClientClass Client { get { return s_Client; } }
+    public static Fohjin.DDD.MVC2Beta.Controllers.BaseController Base = new Fohjin.DDD.MVC2Beta.Controllers.T4MVC_BaseController();
+    public static Fohjin.DDD.MVC2Beta.Controllers.HomeController Home = new Fohjin.DDD.MVC2Beta.Controllers.T4MVC_HomeController();
     public static T4MVC.SharedController Shared = new T4MVC.SharedController();
 }
 
 namespace T4MVC {
+    [CompilerGenerated]
+    public class ClientClass {
+        public readonly string Name = "Client";
+        public Fohjin.DDD.MVC2Beta.Areas.Client.Controllers.ChangeAddressController ChangeAddress = new Fohjin.DDD.MVC2Beta.Areas.Client.Controllers.T4MVC_ChangeAddressController();
+        public Fohjin.DDD.MVC2Beta.Areas.Client.Controllers.ChangeNameController ChangeName = new Fohjin.DDD.MVC2Beta.Areas.Client.Controllers.T4MVC_ChangeNameController();
+        public Fohjin.DDD.MVC2Beta.Areas.Client.Controllers.ChangePhoneNumberController ChangePhoneNumber = new Fohjin.DDD.MVC2Beta.Areas.Client.Controllers.T4MVC_ChangePhoneNumberController();
+        public Fohjin.DDD.MVC2Beta.Areas.Client.Controllers.CreateController Create = new Fohjin.DDD.MVC2Beta.Areas.Client.Controllers.T4MVC_CreateController();
+        public Fohjin.DDD.MVC2Beta.Areas.Client.Controllers.DetailsController Details = new Fohjin.DDD.MVC2Beta.Areas.Client.Controllers.T4MVC_DetailsController();
+        public Fohjin.DDD.MVC2Beta.Areas.Client.Controllers.ListController List = new Fohjin.DDD.MVC2Beta.Areas.Client.Controllers.T4MVC_ListController();
+        public T4MVC.Client.SharedController Shared = new T4MVC.Client.SharedController();
+    }
 }
 
 namespace System.Web.Mvc {
@@ -126,6 +141,18 @@ public interface IT4MVCActionResult {
     RouteValueDictionary RouteValues { get; set; }
 }
 
+[CompilerGenerated]
+public class T4MVC_ActionResult : System.Web.Mvc.ActionResult, IT4MVCActionResult {
+    public T4MVC_ActionResult(string area, string controller, string action): base()  {
+        this.InitMVCT4Result(area, controller, action);
+    }
+     
+    public override void ExecuteResult(System.Web.Mvc.ControllerContext context) { }
+    
+    public string Controller { get; set; }
+    public string Action { get; set; }
+    public RouteValueDictionary RouteValues { get; set; }
+}
 
 
 
@@ -147,6 +174,14 @@ namespace Links {
         public static readonly string MicrosoftAjax_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/MicrosoftAjax.min.js") ? Url("MicrosoftAjax.min.js") : Url("MicrosoftAjax.js");
         public static readonly string MicrosoftMvcAjax_debug_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/MicrosoftMvcAjax.debug.min.js") ? Url("MicrosoftMvcAjax.debug.min.js") : Url("MicrosoftMvcAjax.debug.js");
         public static readonly string MicrosoftMvcAjax_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/MicrosoftMvcAjax.min.js") ? Url("MicrosoftMvcAjax.min.js") : Url("MicrosoftMvcAjax.js");
+    }
+
+    [CompilerGenerated]
+    public static class Content {
+        private const string URLPATH = "~/Content";
+        public static string Url() { return T4MVCHelpers.ProcessVirtualPath(URLPATH); }
+        public static string Url(string fileName) { return T4MVCHelpers.ProcessVirtualPath(URLPATH + "/" + fileName); }
+        public static readonly string Site_css = Url("Site.css");
     }
 
 }

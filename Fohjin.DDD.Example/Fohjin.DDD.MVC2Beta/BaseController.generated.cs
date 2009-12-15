@@ -17,21 +17,37 @@ using System.Web.Mvc.Ajax;
 using System.Web.Mvc.Html;
 using System.Web.Routing;
 using T4MVC;
-namespace T4MVC {
+namespace Fohjin.DDD.MVC2Beta.Controllers {
     [CompilerGenerated]
-    public class SharedController {
+    public partial class BaseController {
+        protected BaseController(Dummy d) { }
+
+        protected RedirectToRouteResult RedirectToAction(ActionResult result) {
+            var callInfo = (IT4MVCActionResult)result;
+            return RedirectToRoute(callInfo.RouteValues);
+        }
+
+
+        public readonly string Area = "";
+        public readonly string Name = "Base";
+
+        static readonly ActionNames s_actions = new ActionNames();
+        public ActionNames Actions { get { return s_actions; } }
+        public class ActionNames {
+        }
+
 
         static readonly ViewNames s_views = new ViewNames();
         public ViewNames Views { get { return s_views; } }
         public class ViewNames {
-            static readonly _DisplayTemplates s_DisplayTemplates = new _DisplayTemplates();
-            public _DisplayTemplates DisplayTemplates { get { return s_DisplayTemplates; } }
-            public partial class _DisplayTemplates{
-                public readonly string @object = "~/Views/Shared/DisplayTemplates/object.ascx";
-            }
         }
     }
 
+    [CompilerGenerated]
+    public class T4MVC_BaseController: Fohjin.DDD.MVC2Beta.Controllers.BaseController {
+        public T4MVC_BaseController() : base(Dummy.Instance) { }
+
+    }
 }
 
 #endregion T4MVC
