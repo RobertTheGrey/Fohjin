@@ -1,22 +1,21 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{202FEBE5-F8A1-4A68-8306-75FDE33E0D45}</ProjectGuid>
+    <ProjectGuid>{44666AF0-AC7A-486E-AD1F-49FD0573ED43}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Fohjin</RootNamespace>
-    <AssemblyName>Fohjin</AssemblyName>
+    <RootNamespace>Fohjin.DDD.Reporting.Dto</RootNamespace>
+    <AssemblyName>Fohjin.DDD.Reporting.Dto</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
-    <UpgradeBackupLocation>
-    </UpgradeBackupLocation>
     <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation />
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -67,10 +66,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AccountDetailsReport.cs" />
+    <Compile Include="AccountReport.cs" />
+    <Compile Include="ClosedAccountReport.cs" />
+    <Compile Include="ClosedAccountDetailsReport.cs" />
+    <Compile Include="LedgerReport.cs" />
+    <Compile Include="ClientDetailsReport.cs" />
+    <Compile Include="ClientReport.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SystemDateTime.cs" />
-    <Compile Include="SystemRandom.cs" />
-    <Compile Include="SystemTimer.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
