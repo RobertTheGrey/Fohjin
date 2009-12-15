@@ -33,6 +33,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fohjin", "Fohjin\Fohjin.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fohjin.DDD.MVC", "Fohjin.DDD.MVC\Fohjin.DDD.MVC.csproj", "{D7DDD51D-CA8A-4323-B241-A0F8234F41FE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fohjin.DDD.MVC2Beta", "Fohjin.DDD.MVC2Beta\Fohjin.DDD.MVC2Beta.csproj", "{DCE97D86-DA66-42A2-8DB2-A745B43F35C6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -103,6 +105,10 @@ Global
 		{D7DDD51D-CA8A-4323-B241-A0F8234F41FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D7DDD51D-CA8A-4323-B241-A0F8234F41FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D7DDD51D-CA8A-4323-B241-A0F8234F41FE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DCE97D86-DA66-42A2-8DB2-A745B43F35C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DCE97D86-DA66-42A2-8DB2-A745B43F35C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DCE97D86-DA66-42A2-8DB2-A745B43F35C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DCE97D86-DA66-42A2-8DB2-A745B43F35C6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
