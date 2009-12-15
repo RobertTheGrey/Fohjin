@@ -1,21 +1,20 @@
 ﻿<#
 /*
-T4MVC Version 2.5.01
-Find latest version on http://aspnet.codeplex.com/Release/ProjectReleases.aspx?ReleaseId=24471&ProjectName=aspnet
+T4MVC Version 2.6.03
+Find latest version and documentation at http://aspnet.codeplex.com/wikipage?title=T4MVC
+Discuss on the T4MVC forum: http://forums.asp.net/1215.aspx
 
 Maintained by David Ebbo, with much feedback from the MVC community (thanks all!)
 david.ebbo@microsoft.com
 http://twitter.com/davidebbo
 http://blogs.msdn.com/davidebb
 
+Related blog posts: http://blogs.msdn.com/davidebb/archive/tags/T4MVC/default.aspx
+
 Feel free to use and modify to fit your needs.
 
 IMPORTANT NOTE IF YOU USE VISUAL STUDIO 2010 BETA 2: you'll need to add one import below:
     import namespace="Microsoft.VisualStudio.TextTemplating.Interfaces"
-
-NOTE: all the documentation and versioning information that used to be in this file has been moved
-to the readme.txt file (found in the same zip file on CodePlex) as of version 2.4.03. Please check the
-readme for all the details!
 */
 #>
 <#@ template language="C#v3.5" debug="true" hostspecific="true" #>
@@ -24,6 +23,7 @@ readme for all the details!
 <#@ assembly name="EnvDTE" #>
 <#@ assembly name="EnvDTE80" #>
 <#@ assembly name="VSLangProj" #>
+<#@ assembly name="System.Web.Mvc" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ import namespace="System.IO" #>
 <#@ import namespace="System.Linq" #>
@@ -58,8 +58,30 @@ using <#= T4MVCNamespace #>;
 
 [CompilerGenerated]
 public static class <#= HelpersPrefix #> {
-<#  foreach (var controller in GetControllers()) { #>
-    public static <#= controller.FullClassName #> <#= controller.Name #> = new <#= controller.DerivedClassName #>();
+<#  if (IncludeAreasToken) { #>
+public static class Areas {
+<#  } #>
+<#  foreach (var area in Areas.Where(a => !string.IsNullOrEmpty(a.Name))) { #>
+    static readonly <#= area.Name #>Class s_<#= area.Name #> = new <#= area.Name #>Class();
+    public static <#= area.Name #>Class <#= EscapeID(area.Namespace) #> { get { return s_<#= area.Name #>; } }
+<#  } #>
+<#  if (IncludeAreasToken) { #>
+}
+<#  } #>
+<#  foreach (var controller in DefaultArea.GetControllers()) { #>
+    public static <#= controller.FullClassName #> <#= controller.Name #> = new <#= controller.FullDerivedClassName #>();
+<#  } #>
+}
+
+namespace <#= T4MVCNamespace #> {
+<#  foreach (var area in Areas.Where(a => !string.IsNullOrEmpty(a.Name))) { #>
+    [CompilerGenerated]
+    public class <#= area.Name #>Class {
+        public readonly string Name = "<#= area.Name #>";
+<#    foreach(var controller in area.GetControllers()) { #>
+        public <#= controller.FullClassName #> <#= controller.Name #> = new <#= controller.FullDerivedClassName #>();
+<#    } #>
+    }
 <#  } #>
 }
 
@@ -91,7 +113,7 @@ namespace System.Web.Mvc {
             return htmlHelper.BeginForm(callInfo.Action, callInfo.Controller, callInfo.RouteValues, formMethod, htmlAttributes);
         }
 
-<# if (MvcVersion >= 2) {#>
+<# if (MvcVersion >= 2 && SupportRenderAction) {#>
         public static void RenderAction(this HtmlHelper htmlHelper, ActionResult result) {
             var callInfo = (IT4MVCActionResult)result;
             htmlHelper.RenderAction(callInfo.Action, callInfo.Controller, callInfo.RouteValues);
@@ -141,10 +163,11 @@ namespace System.Web.Mvc {
             return ((IT4MVCActionResult)result).RouteValues;
         }
 
-        public static void InitMVCT4Result(this IT4MVCActionResult result, string controller, string action) {
+        public static void InitMVCT4Result(this IT4MVCActionResult result, string area, string controller, string action) {
             result.Controller = controller;
-            result.Action = action; ;
+            result.Action = action;
             result.RouteValues = new RouteValueDictionary();
+            result.RouteValues.Add("Area", area ?? "");
             result.RouteValues.Add("Controller", controller);
             result.RouteValues.Add("Action", action);
         }
@@ -167,8 +190,8 @@ public interface IT4MVCActionResult {
 <# foreach (var resultType in ResultTypes.Values) { #>
 [CompilerGenerated]
 public class T4MVC_<#= resultType.Name #> : <#= resultType.FullName #>, IT4MVCActionResult {
-    public T4MVC_<#= resultType.Name #>(string controller, string action): base(<# resultType.Constructor.WriteNonEmptyParameterValues(true); #>)  {
-        this.InitMVCT4Result(controller, action);
+    public T4MVC_<#= resultType.Name #>(string area, string controller, string action): base(<# resultType.Constructor.WriteNonEmptyParameterValues(true); #>)  {
+        this.InitMVCT4Result(area, controller, action);
     }
     <# foreach (var method in resultType.AbstractMethods) { #> 
     <#= method.IsPublic ? "public" : "protected" #> override void <#= method.Name #>(<# method.WriteFormalParameters(true); #>) { }
@@ -194,7 +217,7 @@ namespace <#= LinksNamespace #> {
       RenderAdditionalCode();
 #>
 <#  foreach (var controller in GetAbstractControllers().Where(c => !c.HasDefaultConstructor)) { #>
-<# manager.StartNewFile(controller.ClassName + ".generated.cs"); #>
+<# manager.StartNewFile(controller.GeneratedFileName); #>
 namespace <#= controller.Namespace #> {
     public partial class <#= controller.ClassName #> {
         protected <#= controller.ClassName #>() { }
@@ -204,16 +227,17 @@ namespace <#= controller.Namespace #> {
 <#  } #>
 
 <#      foreach (var controller in GetControllers()) { #>
-<# manager.StartNewFile(controller.ClassName + ".generated.cs"); #>
+<# manager.StartNewFile(controller.GeneratedFileName); #>
+<# if (!String.IsNullOrEmpty(controller.Namespace)) { #>
 namespace <#= controller.Namespace #> {
+<# } #>
+    [CompilerGenerated]
     public <# if (!controller.SharedViewFolder) { #>partial <# } #>class <#= controller.ClassName #> {
-
 <#      if (!controller.SharedViewFolder) { #>
 <#          if (!controller.HasExplicitConstructor) { #>
         public <#= controller.ClassName #>() { }
 
 <#          } #>
-        [CompilerGenerated]
         protected <#= controller.ClassName #>(Dummy d) { }
 
         protected RedirectToRouteResult RedirectToAction(ActionResult result) {
@@ -224,18 +248,15 @@ namespace <#= controller.Namespace #> {
 <#      foreach (var method in controller.ActionMethodsUniqueWithoutParameterlessOverload) { #>
         [NonAction]
         public <#= method.ReturnTypeFullName #> <#= method.Name #>() {
-            return new T4MVC_<#= method.ReturnType #>(Name, Actions.<#= method.ActionName #>);
+            return new T4MVC_<#= method.ReturnType #>(Area, Name, Actions.<#= method.ActionName #>);
         }
-
 <#      } #>
 
-        [CompilerGenerated]
+        public readonly string Area = "<#= controller.AreaName #>";
         public readonly string Name = "<#= controller.Name #>";
 
         static readonly ActionNames s_actions = new ActionNames();
-        [CompilerGenerated]
         public ActionNames Actions { get { return s_actions; } }
-        [CompilerGenerated]
         public class ActionNames {
 <#          foreach (var method in controller.ActionMethodsWithUniqueNames) { #>
             public readonly string <#= method.ActionName #> = <#= method.ActionNameValueExpression #>;
@@ -245,24 +266,20 @@ namespace <#= controller.Namespace #> {
 <#      } #>
 
         static readonly ViewNames s_views = new ViewNames();
-        [CompilerGenerated]
         public ViewNames Views { get { return s_views; } }
-        [CompilerGenerated]
         public class ViewNames {
 <#      RenderControllerViews(controller);#>
         }
     }
-}
 
 <#  if(!controller.SharedViewFolder) { #>
-namespace <#= T4MVCNamespace #> {
     [CompilerGenerated]
     public class <#= controller.DerivedClassName #>: <#= controller.FullClassName #> {
         public <#= controller.DerivedClassName #>() : base(Dummy.Instance) { }
 
 <#      foreach (var method in controller.ActionMethods) { #>
         public override <#= method.ReturnTypeFullName #> <#= method.Name #>(<# method.WriteFormalParameters(true); #>) {
-            var callInfo = new T4MVC_<#= method.ReturnType #>("<#= controller.Name #>", Actions.<#= method.ActionName #>);
+            var callInfo = new T4MVC_<#= method.ReturnType #>(Area, Name, Actions.<#= method.ActionName #>);
 <#          if (method.Parameters.Count > 0) { #>
 <#              foreach (var p in method.Parameters) { #>
             callInfo.RouteValues.Add("<#= p.Name #>", <#= p.Name #>);
@@ -273,8 +290,10 @@ namespace <#= T4MVCNamespace #> {
 
 <#      } #>
     }
-}
 <#  } #>
+<# if (!String.IsNullOrEmpty(controller.Namespace)) { #>
+}
+<# } #>
 
 <# manager.EndBlock(); #>
 <#  } #>
@@ -302,29 +321,53 @@ const string ControllerSuffix = "Controller";
 
 static DTE Dte;
 static Project Project;
-static HashSet<ControllerInfo> Controllers;
+static string AppRoot;
+static HashSet<AreaInfo> Areas;
+static AreaInfo DefaultArea;
 static Dictionary<string, ResultTypeInfo> ResultTypes;
 static TextTransformation TT;
 static string T4FileName;
-static int MvcVersion;
+static float MvcVersion;
+static bool SupportRenderAction;
 static string HtmlStringType;
+static Microsoft.CSharp.CSharpCodeProvider codeProvider = new Microsoft.CSharp.CSharpCodeProvider();
 
-static IEnumerable<ControllerInfo> GetControllers() {
-    return Controllers.Where(c => !c.IsAbstract);
+IEnumerable<ControllerInfo> GetControllers() {
+    var controllers = new List<ControllerInfo>();
+    
+    foreach (var area in Areas) {
+        controllers.AddRange(area.GetControllers());
+    }
+    
+    return controllers;
 }
 
-static IEnumerable<ControllerInfo> GetAbstractControllers() {
-    return Controllers.Where(c => c.IsAbstract);
+IEnumerable<ControllerInfo> GetAbstractControllers() {
+    var controllers = new List<ControllerInfo>();
+    
+    foreach (var area in Areas) {
+        controllers.AddRange(area.GetAbstractControllers());
+    }
+    
+    return controllers;
 }
 
 void PrepareDataToRender(TextTransformation tt) {
     TT = tt;
     T4FileName = Path.GetFileName(Host.TemplateFile);
-    Controllers = new HashSet<ControllerInfo>();
+    Areas = new HashSet<AreaInfo>();
     ResultTypes = new Dictionary<string, ResultTypeInfo>();
 
     // Get the DTE service from the host
-    Dte = (DTE)((IServiceProvider)Host).GetService(typeof(SDTE));
+    var serviceProvider = Host as IServiceProvider;
+    if (serviceProvider != null) {
+        Dte = serviceProvider.GetService(typeof(SDTE)) as DTE;
+    }
+
+    // Fail if we couldn't get the DTE. This can happen when trying to run in TextTransform.exe
+    if (Dte == null) {
+        throw new Exception("T4MVC can only execute through the Visual Studio host");
+    }
 
     Project = GetProjectContainingT4File(Dte);
 
@@ -333,21 +376,27 @@ void PrepareDataToRender(TextTransformation tt) {
         return;
     }
 
+    // Get the path of the root folder of the app
+    AppRoot = Path.GetDirectoryName(Project.FullName) + '\\';
+
     MvcVersion = GetMvcVersion();
+
+    // TEMPORARY: the MVC that comes with VS2010 Beta 2 doesn't have those methods even though it's 2.0, so add additional check
+    // This logic can be removed once VS2010 is final.
+    SupportRenderAction = (typeof(System.Web.Mvc.Controller).Assembly.GetType("System.Web.Mvc.Html.ChildActionExtensions") != null);
 
     // Use the proper return type of render helpers
     HtmlStringType = MvcVersion < 2 ? "string" : "MvcHtmlString";
 
-    ProcessControllersFolder(Project);
-    ProcessAllViews(Project);
+    ProcessAreas(Project);
 }
 
-int GetMvcVersion() {
+float GetMvcVersion() {
     var vsProject = (VSLangProj.VSProject)Project.Object;
 
     foreach (VSLangProj.Reference r in vsProject.References) {
         if (r.Name.Equals("System.Web.Mvc", StringComparison.OrdinalIgnoreCase)) {
-            return r.MajorVersion;
+            return r.MajorVersion + (r.MinorVersion / 10);
         }
     }
 
@@ -374,74 +423,112 @@ Project GetProjectContainingT4File(DTE dte) {
     return projectItem.ContainingProject;
 }
 
-void ProcessControllersFolder(Project project) {
-    // Get the Controllers folder
-    ProjectItem controllerProjectItem = GetProjectItem(project, ControllersFolder);
+void ProcessAreas(Project project) {
+    // Process the default area
+    ProcessArea(project.ProjectItems, null);
+
+    // Get the Areas folder
+    ProjectItem areaProjectItem = GetProjectItem(project, AreasFolder);
+    if (areaProjectItem == null)
+        return;
+        
+    foreach (ProjectItem item in areaProjectItem.ProjectItems) {
+        if (IsFolder(item)) {
+            ProcessArea(item.ProjectItems, item.Name);
+        }
+    }
+}
+
+void ProcessArea(ProjectItems areaFolderItems, string name) {
+    var area = new AreaInfo() { Name = name };
+    ProcessAreaControllers(areaFolderItems, area);
+    ProcessAreaViews(areaFolderItems, area);
+    Areas.Add(area);
+
+    if (String.IsNullOrEmpty(name))
+        DefaultArea = area;
+}
+
+void ProcessAreaControllers(ProjectItems areaFolderItems, AreaInfo area) {
+    // Get area Controllers folder
+    ProjectItem controllerProjectItem = GetProjectItem(areaFolderItems, ControllersFolder);
     if (controllerProjectItem == null)
         return;
 
-    ProcessControllersRecursive(controllerProjectItem);
+    ProcessControllersRecursive(controllerProjectItem, area);
 }
 
-void ProcessControllersRecursive(ProjectItem projectItem) {
+void ProcessAreaViews(ProjectItems areaFolderItems, AreaInfo area) {
+    // Get area Views folder
+    ProjectItem viewsProjectItem = GetProjectItem(areaFolderItems, ViewsRootFolder);
+    if (viewsProjectItem == null)
+        return;
+
+    ProcessAllViews(viewsProjectItem, area);
+}
+
+void ProcessControllersRecursive(ProjectItem projectItem, AreaInfo area) {
 
     // Recurse into all the sub-items (both files and folder can have some - e.g. .tt files)
     foreach (ProjectItem item in projectItem.ProjectItems) {
-        ProcessControllersRecursive(item);
+        ProcessControllersRecursive(item, area);
     }
 
     if (projectItem.FileCodeModel != null) {
+        foreach (var type in projectItem.FileCodeModel.CodeElements.OfType<CodeClass2>()) {
+            ProcessControllerType(type, area);
+        }
         // Process all the elements that are namespaces
         foreach (var ns in projectItem.FileCodeModel.CodeElements.OfType<CodeNamespace>()) {
-            ProcessControllerTypesInNamespace(ns);
+            foreach (var type in ns.Members.OfType<CodeClass2>()) {
+                ProcessControllerType(type, area);
+            }
         }
     }
 }
 
-void ProcessControllerTypesInNamespace(CodeNamespace ns) {
-    foreach (var type in ns.Members.OfType<CodeClass2>()) {
+void ProcessControllerType(CodeClass2 type, AreaInfo area) {
+    // Only process types that end with Controller
+    // REVIEW: this check is not super reliable. Should look at base class.
+    if (!type.Name.EndsWith(ControllerSuffix, StringComparison.OrdinalIgnoreCase))
+        return;
 
-        // Only process types that end with Controller
-        // REVIEW: this check is not super reliable. Should look at base class.
-        if (!type.Name.EndsWith(ControllerSuffix, StringComparison.OrdinalIgnoreCase))
-            continue;
+    // Don't process generic classes (their concrete derived classes will be processed)
+    if (type.IsGeneric)
+        return;
 
-        // Don't process generic classes (their concrete derived classes will be processed)
-        if (type.IsGeneric)
-            continue;
-
-        // Make sure the class is partial
-        if (type.ClassKind != vsCMClassKind.vsCMClassKindPartialClass) {
-            try {
-                type.ClassKind = vsCMClassKind.vsCMClassKindPartialClass;
-            }
-            catch {
-                // If we couldn't make it partial, give a warning and skip it
-                Warning(String.Format("{0} was not able to make the class {1} partial. Please change it manually if possible", T4FileName, type.Name));
-                continue;
-            }
-            Warning(String.Format("{0} changed the class {1} to be partial", T4FileName, type.Name));
+    // Make sure the class is partial
+    if (type.ClassKind != vsCMClassKind.vsCMClassKindPartialClass) {
+        try {
+            type.ClassKind = vsCMClassKind.vsCMClassKindPartialClass;
         }
-
-        // Collect misc info about the controller class and add it to the collection
-        var controllerInfo = new ControllerInfo() {
-            Namespace = ns.Name,
-            ClassName = type.Name
-        };
-
-        // Either process new ControllerInfo or integrate results into existing object for partially defined controllers
-        var target = Controllers.Add(controllerInfo) ? controllerInfo : Controllers.First(c => c.Equals(controllerInfo));
-        target.HasExplicitConstructor |= HasExplicitConstructor(type);
-        target.HasExplicitDefaultConstructor |= HasExplicitDefaultConstructor(type);
-
-        if (type.IsAbstract) {
-            // If it's abstract, set a flag and don't process action methods (derived classes will)
-            target.IsAbstract = true;
+        catch {
+            // If we couldn't make it partial, give a warning and skip it
+            Warning(String.Format("{0} was not able to make the class {1} partial. Please change it manually if possible", T4FileName, type.Name));
+            return;
         }
-        else {
-            // Process all the action methods in the controller
-            ProcessControllerActionMethods(target, type);
-        }
+        Warning(String.Format("{0} changed the class {1} to be partial", T4FileName, type.Name));
+    }
+
+    // Collect misc info about the controller class and add it to the collection
+    var controllerInfo = new ControllerInfo {
+        Area = area,
+        Namespace = type.Namespace != null ? type.Namespace.Name : String.Empty,
+        ClassName = type.Name
+    };
+
+    // Either process new ControllerInfo or integrate results into existing object for partially defined controllers
+    var target = area.Controllers.Add(controllerInfo) ? controllerInfo : area.Controllers.First(c => c.Equals(controllerInfo));
+    target.HasExplicitConstructor |= HasExplicitConstructor(type);
+    target.HasExplicitDefaultConstructor |= HasExplicitDefaultConstructor(type);
+
+    if (type.IsAbstract) {
+        // If it's abstract, set a flag and don't process action methods (derived classes will)
+        target.IsAbstract = true;
+    }
+    else {
+        // Process all the action methods in the controller
+        ProcessControllerActionMethods(target, type);
     }
 }
 
@@ -509,12 +596,7 @@ void ProcessControllerActionMethods(ControllerInfo controllerInfo, CodeClass2 cu
     }
 }
 
-void ProcessAllViews(Project project) {
-    // Get the Views folder
-    ProjectItem viewsProjectItem = GetProjectItem(project, ViewsRootFolder);
-    if (viewsProjectItem == null)
-        return;
-
+void ProcessAllViews(ProjectItem viewsProjectItem, AreaInfo area) {
     // Go through all the sub-folders in the Views folder
     foreach (ProjectItem item in viewsProjectItem.ProjectItems) {
 
@@ -525,12 +607,17 @@ void ProcessAllViews(Project project) {
         ControllerInfo controller;
         // Treat Shared as a pseudo-controller for consistency
         if (item.Name.Equals("Shared", StringComparison.OrdinalIgnoreCase)) {
-            controller = new ControllerInfo() { SharedViewFolder = true, Namespace = T4MVCNamespace, ClassName = "Shared" + ControllerSuffix };
-            Controllers.Add(controller);
+            controller = new ControllerInfo { 
+                Area = area,
+                SharedViewFolder = true,
+                Namespace = MakeClassName(T4MVCNamespace, area.Name), 
+                ClassName = "Shared" + ControllerSuffix 
+            };
+            area.Controllers.Add(controller);
         }
         else {
             // Find the controller for this view folder
-            controller = Controllers.SingleOrDefault(c => c.Name.Equals(item.Name, StringComparison.OrdinalIgnoreCase));
+            controller = area.Controllers.SingleOrDefault(c => c.Name.Equals(item.Name, StringComparison.OrdinalIgnoreCase));
 
             if (controller == null) {
                 Error(String.Format("The Views folder has a sub-folder named '{0}', but there is no matching controller", item.Name));
@@ -538,51 +625,51 @@ void ProcessAllViews(Project project) {
             }
         }
 
-        AddViewsRecursive(String.Empty, item.ProjectItems, controller.ViewsFolder);
+        AddViewsRecursive(item.ProjectItems, controller.ViewsFolder);
     }
 }
 
-void AddViewsRecursive(string prefix, ProjectItems items, ViewsFolderInfo viewsFolder) {
+void AddViewsRecursive(ProjectItems items, ViewsFolderInfo viewsFolder) {
     // Go through all the files in the subfolder to get the view names
     foreach (ProjectItem item in items) {
-        string viewName = Path.GetFileNameWithoutExtension(item.Name);
         if (item.Kind == Constants.vsProjectItemKindPhysicalFile) {
             if (Path.GetExtension(item.Name).Equals(".master", StringComparison.OrdinalIgnoreCase))
                 continue;	// ignore master files
-            viewsFolder.Views.Add(viewName);
+            viewsFolder.AddView(item);
         }
         else if (item.Kind == Constants.vsProjectItemKindPhysicalFolder) {
-            var subViewFolder = new ViewsFolderInfo() { FullName = prefix + viewName };
-            if (subViewFolder.Name.Equals("App_LocalResources", StringComparison.OrdinalIgnoreCase))
+            string folderName = Path.GetFileName(item.Name);
+            if (folderName.Equals("App_LocalResources", StringComparison.OrdinalIgnoreCase))
                 continue;
+            var subViewFolder = new ViewsFolderInfo() { Name = folderName };
             viewsFolder.SubFolders.Add(subViewFolder);
-            AddViewsRecursive(prefix + viewName + "/", item.ProjectItems, subViewFolder);
+            AddViewsRecursive(item.ProjectItems, subViewFolder);
         }
     }
 }
 
 void RenderControllerViews(ControllerInfo controller) {
     PushIndent("            ");
-    RenderViewsRecursive(controller.ViewsFolder);
+    RenderViewsRecursive(controller.ViewsFolder, controller);
     PopIndent();
 }
 
-void RenderViewsRecursive(ViewsFolderInfo viewsFolder) {
+void RenderViewsRecursive(ViewsFolderInfo viewsFolder, ControllerInfo controller) {
 
     // For each view, generate a readonly string
-    foreach (string view in viewsFolder.Views) {
-        WriteLine("public readonly string " + Sanitize(view) + " = \"" + viewsFolder.GetFullViewName(view) + "\";");
+    foreach (var viewPair in viewsFolder.Views) {
+        WriteLine("public readonly string " + EscapeID(Sanitize(viewPair.Key)) + " = \"" + viewPair.Value + "\";");
     }
 
     // For each sub folder, generate a class and recurse
     foreach (var subFolder in viewsFolder.SubFolders) {
         string newClassName = Sanitize(subFolder.Name);#>
 static readonly _<#=newClassName#> s_<#=newClassName#> = new _<#=newClassName#>();
-public _<#=newClassName#> <#=newClassName#> { get { return s_<#=newClassName#>; } }
+public _<#=newClassName#> <#=EscapeID(newClassName)#> { get { return s_<#=newClassName#>; } }
 public partial class _<#=newClassName#>{
 <#+
         PushIndent("    ");
-        RenderViewsRecursive(subFolder);
+        RenderViewsRecursive(subFolder, controller);
         PopIndent();
 
         WriteLine("}");
@@ -601,7 +688,7 @@ void ProcessStaticFilesRecursive(ProjectItem projectItem, string path) {
 
     if (IsFolder(projectItem)) { #>
     [CompilerGenerated]
-    public static class @<#=Sanitize(projectItem.Name) #> {
+    public static class <#=EscapeID(Sanitize(projectItem.Name)) #> {
         private const string URLPATH = "<#=path#>/<#=projectItem.Name#>";
         public static string Url() { return T4MVCHelpers.ProcessVirtualPath(URLPATH); }
         public static string Url(string fileName) { return T4MVCHelpers.ProcessVirtualPath(URLPATH + "/" + fileName); }
@@ -658,6 +745,15 @@ ProjectItem GetProjectItem(ProjectItems items, string subPath) {
     return current;
 }
 
+static string GetVirtualPath(ProjectItem item) {
+    string fileFullPath = item.get_FileNames(0);
+    if (!fileFullPath.StartsWith(AppRoot, StringComparison.OrdinalIgnoreCase))
+        throw new Exception(string.Format("File {0} is not under app root {1}. Please report issue.", fileFullPath, AppRoot ));
+    
+    // Make a virtual path from the physical path
+    return "~/" + fileFullPath.Substring(AppRoot.Length).Replace('\\', '/');
+}
+
 // Return all the CodeFunction2 in the CodeElements collection
 static IEnumerable<CodeFunction2> GetMethods(CodeClass2 codeClass) {
     // Only look at regular method (e.g. ignore things like contructors)
@@ -687,6 +783,11 @@ static bool IsFolder(ProjectItem item) {
     return (item.Kind == Constants.vsProjectItemKindPhysicalFolder);
 }
 
+static string MakeClassName(string ns, string classname) {
+    return String.IsNullOrEmpty(ns) ? classname :
+        String.IsNullOrEmpty(classname) ? ns : ns + "." + codeProvider.CreateEscapedIdentifier(classname);
+}
+
 static string Sanitize(string token) {
     // Replace all invalid chars by underscores
     token = Regex.Replace(token, @"[\W\b]", "_", RegexOptions.IgnoreCase);
@@ -701,11 +802,59 @@ static string Sanitize(string token) {
     return token;
 }
 
+static string EscapeID(string id) {
+    return codeProvider.CreateEscapedIdentifier(id);
+}
+
+// Data structure to collect data about an area
+class AreaInfo {
+    public AreaInfo() {
+        Controllers = new HashSet<ControllerInfo>();
+    }
+
+    public string Name { get; set; }
+    public HashSet<ControllerInfo> Controllers { get; set; }
+
+    public string Namespace {
+        get {
+            // When *not* using an 'Areas' token, we need to disambiguate conflicts
+            // between Area names and controller names (from the default Area)
+            if (!IncludeAreasToken && DefaultArea.Controllers.Any(c => c.Name == Name))
+                return Name + "Area";
+            
+            return Name;
+        }
+    }
+    
+    public IEnumerable<ControllerInfo> GetControllers() {
+        return Controllers.Where(c => !c.IsAbstract);
+    }
+    
+    public IEnumerable<ControllerInfo> GetAbstractControllers() {
+        return Controllers.Where(c => c.IsAbstract);
+    }
+}
+
 // Data structure to collect data about a controller class
 class ControllerInfo {
     public ControllerInfo() {
         ActionMethods = new HashSet<ActionMethodInfo>();
         ViewsFolder = new ViewsFolderInfo();
+    }
+    
+    public AreaInfo Area { get; set; }
+    
+    public string AreaName {
+        get { return Area.Name ?? ""; }
+    }
+
+    public string ViewPath {
+        get {
+            if (string.IsNullOrEmpty(Area.Name))
+                return String.Format("~/{0}/{1}/", ViewsRootFolder, Name);
+            else
+                return String.Format("~/{0}/{1}/{2}/", AreasFolder, ViewsRootFolder, Name);
+        }
     }
 
     // True when this is not a real controller, but a placeholder for the Shared views folder
@@ -728,15 +877,27 @@ class ControllerInfo {
 
     public string FullClassName {
         get {
-            return Namespace + "." + ClassName;
+            return MakeClassName(Namespace, ClassName);
         }
     }
 
     public string DerivedClassName {
         get {
+            return "T4MVC_" + ClassName;
+        }
+    }
+
+    public string FullDerivedClassName {
+        get {
             if (SharedViewFolder)
                 return FullClassName;
-            return "T4MVC_" + ClassName;
+            return MakeClassName(Namespace, DerivedClassName);
+        }
+    }
+
+    public string GeneratedFileName {
+        get {
+            return MakeClassName(AreaName, ClassName + ".generated.cs");
         }
     }
 
@@ -789,25 +950,24 @@ class ControllerInfo {
 // Info about a view folder, its views and its sub view folders
 class ViewsFolderInfo {
     public ViewsFolderInfo() {
-        Views = new HashSet<string>();
+        Views = new Dictionary<string, string>();
         SubFolders = new List<ViewsFolderInfo>();
     }
 
-    public string FullName { get; set; }
-    public string Name {
-        get {
-            return FullName.Substring(FullName.LastIndexOf("/") + 1);
-        }
+    public void AddView(ProjectItem item) {
+        string viewName = Path.GetFileName(item.Name);
+        string viewFieldName = Path.GetFileNameWithoutExtension(viewName);
+        
+        // If the simple view name is already in use, include the extension (e.g. foo_ascx instead of just foo)
+        if (Views.ContainsKey(viewFieldName))
+            viewFieldName = Sanitize(viewName);
+
+        Views[viewFieldName] = GetVirtualPath(item);
     }
-    public HashSet<string> Views { get; private set; }
+
+    public string Name { get; set; }
+    public Dictionary<string, string> Views { get; private set; }
     public List<ViewsFolderInfo> SubFolders { get; set; }
-
-    public string GetFullViewName(string viewName) {
-        if (String.IsNullOrEmpty(FullName))
-            return viewName;
-
-        return FullName + "/" + viewName;
-    }
 }
 
 // Data structure to collect data about a method
@@ -873,7 +1033,7 @@ class FunctionInfo {
                     TT.Write("new byte[0]");
                     break;
                 default:
-                    TT.Write("null");
+                    TT.Write("default(" + p.Type + ")");
                     break;
             }
         }
