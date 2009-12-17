@@ -1,11 +1,16 @@
 using System;
+using System.ComponentModel.DataAnnotations;
+using System.Web.Mvc;
 
 namespace Fohjin.DDD.Reporting.Dto
 {
     public class AccountReport
     {
+        [HiddenInput(DisplayValue = false)]
         public Guid Id { get; private set; }
+        [HiddenInput(DisplayValue = false)]
         public Guid ClientDetailsReportId { get; private set; }
+        [Required]
         public string AccountName { get; private set; }
         public string AccountNumber { get; private set; }
 

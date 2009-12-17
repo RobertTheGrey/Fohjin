@@ -6,7 +6,41 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
     <h2>
         Client Details</h2>
-        <%=Html.DisplayForModel() %>
+        <div id="client-details">
+    <%=Html.DisplayForModel() %>
+    </div>
+        <div id="client-accounts">
+    <table>
+        <tr>
+            <th>
+                Accounts
+            </th>
+        </tr>
+        <%foreach (var account in Model.Accounts) {%>
+        <tr>
+            <td>
+                <%=Html.ActionLink(account.AccountNumber, MVC.Account.Details.Show(account.Id) )%> - <%= account.AccountName %>
+            </td>
+        </tr>
+        <%} %>
+    </table>
+    </div>
+        <div id="client-closed-accounts">
+    <table>
+        <tr>
+            <th>
+                Closed Accounts
+            </th>
+        </tr>
+        <%foreach (var closedAccount in Model.ClosedAccounts) {%>
+        <tr>
+            <td>
+                <%= closedAccount.AccountNumber %> - <%= closedAccount.AccountName %>
+            </td>
+        </tr>
+        <%} %>
+    </table>
+    </div>
     <p>
         <%= Html.ActionLink("Change Name", MVC.Client.ChangeName.Show(Model.Id)) %>
         |

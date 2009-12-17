@@ -69,6 +69,18 @@
     <Reference Include="System.Web.Mobile" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Account.ChangeNameController.generated.cs">
+      <DependentUpon>T4MVC.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Account.DetailsController.generated.cs">
+      <DependentUpon>T4MVC.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Account.SharedController.generated.cs">
+      <DependentUpon>T4MVC.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Areas\Account\AreaRegistration.cs" />
+    <Compile Include="Areas\Account\Controllers\ChangeNameController.cs" />
+    <Compile Include="Areas\Account\Controllers\DetailsController.cs" />
     <Compile Include="Areas\Client\AreaRegistration.cs" />
     <Compile Include="Areas\Client\Controllers\ChangeNameController.cs" />
     <Compile Include="Areas\Client\Controllers\CreateController.cs" />
@@ -139,6 +151,7 @@
     <Content Include="Views\Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Areas\Account\Views\Details\Show.aspx" />
     <Content Include="Areas\Client\Views\ChangeAddress\Show.aspx" />
     <Content Include="Areas\Client\Views\ChangeName\Show.aspx" />
     <Content Include="Areas\Client\Views\ChangePhoneNumber\Show.aspx" />
@@ -146,6 +159,7 @@
     <Content Include="Areas\Client\Views\Details\Show.aspx" />
     <Content Include="Areas\Client\Views\List\Show.aspx" />
     <Content Include="Areas\Client\Views\Web.config" />
+    <Content Include="Areas\Account\Views\Web.config" />
     <None Include="T4MVC.settings.t4" />
     <None Include="T4MVC.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -192,7 +206,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Areas\Client\Models\" />
+    <Folder Include="Areas\Account\Views\Shared\" />
     <Folder Include="Areas\Client\Views\Shared\" />
     <Folder Include="Models\" />
   </ItemGroup>

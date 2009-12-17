@@ -20,6 +20,8 @@ using T4MVC;
 
 [CompilerGenerated]
 public static class MVC {
+    static readonly AccountClass s_Account = new AccountClass();
+    public static AccountClass Account { get { return s_Account; } }
     static readonly ClientClass s_Client = new ClientClass();
     public static ClientClass Client { get { return s_Client; } }
     public static Fohjin.DDD.MVC2Beta.Controllers.BaseController Base = new Fohjin.DDD.MVC2Beta.Controllers.T4MVC_BaseController();
@@ -28,6 +30,13 @@ public static class MVC {
 }
 
 namespace T4MVC {
+    [CompilerGenerated]
+    public class AccountClass {
+        public readonly string Name = "Account";
+        public Fohjin.DDD.MVC2Beta.Areas.Account.Controllers.ChangeNameController ChangeName = new Fohjin.DDD.MVC2Beta.Areas.Account.Controllers.T4MVC_ChangeNameController();
+        public Fohjin.DDD.MVC2Beta.Areas.Account.Controllers.DetailsController Details = new Fohjin.DDD.MVC2Beta.Areas.Account.Controllers.T4MVC_DetailsController();
+        public T4MVC.Account.SharedController Shared = new T4MVC.Account.SharedController();
+    }
     [CompilerGenerated]
     public class ClientClass {
         public readonly string Name = "Client";
