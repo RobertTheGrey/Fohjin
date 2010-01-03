@@ -8,14 +8,14 @@ using Fohjin.DDD.Reporting.Dto;
 
 namespace Fohjin.DDD.MVC2Beta.Areas.Account.Controllers
 {
-    public partial class ChangeNameController : BaseController
+    public partial class CreateController : BaseController
     {
-        public ChangeNameController(IBus bus, IReportingRepository reportingRepository) : base(bus, reportingRepository) { }
+        public CreateController(IBus bus, IReportingRepository reportingRepository) : base(bus, reportingRepository) { }
 
         public virtual ActionResult Show(Guid id)
         {
-            var account = GetById<AccountReport>(id);
-            return View(account);
+            var newAccount = new AccountReport { ClientDetailsReportId = id };
+            return View(newAccount);
         }
 
         [HttpPost]
@@ -23,10 +23,12 @@ namespace Fohjin.DDD.MVC2Beta.Areas.Account.Controllers
         {
             try
             {
+                ModelState["Id"].Errors.Clear();
                 if (ModelState.IsValid)
                 {
-                    PublishAndCommit(new ChangeAccountNameCommand(account.Id, account.AccountName));
-                    return RedirectToAction(MVC.Account.Details.Show(account.Id));
+                    var newAccount = new OpenNewAccountForClientCommand(account.ClientDetailsReportId, account.AccountName);
+                    PublishAndCommit(newAccount);
+                    return RedirectToAction(MVC.Client.Details.Show(account.ClientDetailsReportId));
                 }
             }
             catch (Exception ex)

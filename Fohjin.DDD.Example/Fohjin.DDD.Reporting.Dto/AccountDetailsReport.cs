@@ -13,9 +13,8 @@ namespace Fohjin.DDD.Reporting.Dto
         public Guid ClientReportId { get; private set; }
         [ScaffoldColumn(false)]
         public IEnumerable<LedgerReport> Ledgers { get; private set; }
-        [Required]
         public string AccountName { get; private set; }
-        public decimal Balance { get; set; }
+        public decimal Balance { get; private set; }
         public string AccountNumber { get; private set; }
 
         public AccountDetailsReport(Guid id, Guid clientId, string accountName, decimal balance, string accountNumber)

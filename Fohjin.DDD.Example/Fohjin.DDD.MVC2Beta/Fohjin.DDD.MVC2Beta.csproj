@@ -72,15 +72,33 @@
     <Compile Include="Account.ChangeNameController.generated.cs">
       <DependentUpon>T4MVC.tt</DependentUpon>
     </Compile>
+    <Compile Include="Account.CreateController.generated.cs">
+      <DependentUpon>T4MVC.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Account.DepositController.generated.cs">
+      <DependentUpon>T4MVC.tt</DependentUpon>
+    </Compile>
     <Compile Include="Account.DetailsController.generated.cs">
       <DependentUpon>T4MVC.tt</DependentUpon>
     </Compile>
     <Compile Include="Account.SharedController.generated.cs">
       <DependentUpon>T4MVC.tt</DependentUpon>
     </Compile>
+    <Compile Include="Account.TransferController.generated.cs">
+      <DependentUpon>T4MVC.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Account.WithdrawalController.generated.cs">
+      <DependentUpon>T4MVC.tt</DependentUpon>
+    </Compile>
     <Compile Include="Areas\Account\AreaRegistration.cs" />
     <Compile Include="Areas\Account\Controllers\ChangeNameController.cs" />
+    <Compile Include="Areas\Account\Controllers\CreateController.cs" />
+    <Compile Include="Areas\Account\Controllers\DepositController.cs" />
     <Compile Include="Areas\Account\Controllers\DetailsController.cs" />
+    <Compile Include="Areas\Account\Controllers\TransferController.cs" />
+    <Compile Include="Areas\Account\Controllers\WithdrawalController.cs" />
+    <Compile Include="Areas\Account\Models\AccountActivityViewModel.cs" />
+    <Compile Include="Areas\Account\Models\TransferViewModel.cs" />
     <Compile Include="Areas\Client\AreaRegistration.cs" />
     <Compile Include="Areas\Client\Controllers\ChangeNameController.cs" />
     <Compile Include="Areas\Client\Controllers\CreateController.cs" />
@@ -151,7 +169,12 @@
     <Content Include="Views\Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Areas\Account\Views\ChangeName\Show.aspx" />
+    <Content Include="Areas\Account\Views\Create\Show.aspx" />
+    <Content Include="Areas\Account\Views\Deposit\Show.aspx" />
     <Content Include="Areas\Account\Views\Details\Show.aspx" />
+    <Content Include="Areas\Account\Views\Transfer\Show.aspx" />
+    <Content Include="Areas\Account\Views\Withdrawal\Show.aspx" />
     <Content Include="Areas\Client\Views\ChangeAddress\Show.aspx" />
     <Content Include="Areas\Client\Views\ChangeName\Show.aspx" />
     <Content Include="Areas\Client\Views\ChangePhoneNumber\Show.aspx" />

@@ -8,7 +8,13 @@
         Account Details</h2>
         <%=Html.DisplayForModel() %>
     <p>
-        <%= Html.ActionLink("Change Name", MVC.Client.ChangeName.Show(Model.Id)) %>
+        <%= Html.ActionLink("Change Name", MVC.Account.ChangeName.Show(Model.Id)) %>
+        |
+        <%= Html.ActionLink("Deposit", MVC.Account.Deposit.Show(Model.Id)) %>
+        |
+        <%= Html.ActionLink("Withdrawal", MVC.Account.Withdrawal.Show(Model.Id)) %>
+        |
+        <%= Html.ActionLink("Transfer", MVC.Account.Transfer.Show(Model.Id)) %>
         |
         <%=Html.ActionLink("Back to Client Details", MVC.Client.Details.Show(Model.ClientReportId))%>
     </p>

@@ -19,8 +19,8 @@ using System.Web.Routing;
 using T4MVC;
 namespace Fohjin.DDD.MVC2Beta.Areas.Account.Controllers {
     [CompilerGenerated]
-    public partial class ChangeNameController {
-        protected ChangeNameController(Dummy d) { }
+    public partial class CreateController {
+        protected CreateController(Dummy d) { }
 
         protected RedirectToRouteResult RedirectToAction(ActionResult result) {
             var callInfo = (IT4MVCActionResult)result;
@@ -37,7 +37,7 @@ namespace Fohjin.DDD.MVC2Beta.Areas.Account.Controllers {
         }
 
         public readonly string Area = "Account";
-        public readonly string Name = "ChangeName";
+        public readonly string Name = "Create";
 
         static readonly ActionNames s_actions = new ActionNames();
         public ActionNames Actions { get { return s_actions; } }
@@ -50,13 +50,13 @@ namespace Fohjin.DDD.MVC2Beta.Areas.Account.Controllers {
         static readonly ViewNames s_views = new ViewNames();
         public ViewNames Views { get { return s_views; } }
         public class ViewNames {
-            public readonly string Show = "~/Areas/Account/Views/ChangeName/Show.aspx";
+            public readonly string Show = "~/Areas/Account/Views/Create/Show.aspx";
         }
     }
 
     [CompilerGenerated]
-    public class T4MVC_ChangeNameController: Fohjin.DDD.MVC2Beta.Areas.Account.Controllers.ChangeNameController {
-        public T4MVC_ChangeNameController() : base(Dummy.Instance) { }
+    public class T4MVC_CreateController: Fohjin.DDD.MVC2Beta.Areas.Account.Controllers.CreateController {
+        public T4MVC_CreateController() : base(Dummy.Instance) { }
 
         public override System.Web.Mvc.ActionResult Show(System.Guid id) {
             var callInfo = new T4MVC_ActionResult(Area, Name, Actions.Show);

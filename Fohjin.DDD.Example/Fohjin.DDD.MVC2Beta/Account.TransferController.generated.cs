@@ -16,11 +16,12 @@ using System.Web.Mvc;
 using System.Web.Mvc.Ajax;
 using System.Web.Mvc.Html;
 using System.Web.Routing;
+using Fohjin.DDD.Reporting.Dto;
 using T4MVC;
 namespace Fohjin.DDD.MVC2Beta.Areas.Account.Controllers {
     [CompilerGenerated]
-    public partial class ChangeNameController {
-        protected ChangeNameController(Dummy d) { }
+    public partial class TransferController {
+        protected TransferController(Dummy d) { }
 
         protected RedirectToRouteResult RedirectToAction(ActionResult result) {
             var callInfo = (IT4MVCActionResult)result;
@@ -37,7 +38,7 @@ namespace Fohjin.DDD.MVC2Beta.Areas.Account.Controllers {
         }
 
         public readonly string Area = "Account";
-        public readonly string Name = "ChangeName";
+        public readonly string Name = "Transfer";
 
         static readonly ActionNames s_actions = new ActionNames();
         public ActionNames Actions { get { return s_actions; } }
@@ -50,13 +51,14 @@ namespace Fohjin.DDD.MVC2Beta.Areas.Account.Controllers {
         static readonly ViewNames s_views = new ViewNames();
         public ViewNames Views { get { return s_views; } }
         public class ViewNames {
-            public readonly string Show = "~/Areas/Account/Views/ChangeName/Show.aspx";
+            public readonly string Show = "~/Areas/Account/Views/Transfer/Show.aspx";
         }
+
     }
 
     [CompilerGenerated]
-    public class T4MVC_ChangeNameController: Fohjin.DDD.MVC2Beta.Areas.Account.Controllers.ChangeNameController {
-        public T4MVC_ChangeNameController() : base(Dummy.Instance) { }
+    public class T4MVC_TransferController: Fohjin.DDD.MVC2Beta.Areas.Account.Controllers.TransferController {
+        public T4MVC_TransferController() : base(Dummy.Instance) { }
 
         public override System.Web.Mvc.ActionResult Show(System.Guid id) {
             var callInfo = new T4MVC_ActionResult(Area, Name, Actions.Show);
@@ -64,9 +66,9 @@ namespace Fohjin.DDD.MVC2Beta.Areas.Account.Controllers {
             return callInfo;
         }
 
-        public override System.Web.Mvc.ActionResult Save(Fohjin.DDD.Reporting.Dto.AccountReport account) {
+        public override System.Web.Mvc.ActionResult Save(Fohjin.DDD.MVC2Beta.Areas.Account.Models.TransferViewModel transfer) {
             var callInfo = new T4MVC_ActionResult(Area, Name, Actions.Save);
-            callInfo.RouteValues.Add("account", account);
+            callInfo.RouteValues.Add("transfer", transfer);
             return callInfo;
         }
 

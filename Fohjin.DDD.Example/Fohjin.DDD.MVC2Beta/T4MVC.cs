@@ -34,7 +34,11 @@ namespace T4MVC {
     public class AccountClass {
         public readonly string Name = "Account";
         public Fohjin.DDD.MVC2Beta.Areas.Account.Controllers.ChangeNameController ChangeName = new Fohjin.DDD.MVC2Beta.Areas.Account.Controllers.T4MVC_ChangeNameController();
+        public Fohjin.DDD.MVC2Beta.Areas.Account.Controllers.CreateController Create = new Fohjin.DDD.MVC2Beta.Areas.Account.Controllers.T4MVC_CreateController();
+        public Fohjin.DDD.MVC2Beta.Areas.Account.Controllers.DepositController Deposit = new Fohjin.DDD.MVC2Beta.Areas.Account.Controllers.T4MVC_DepositController();
         public Fohjin.DDD.MVC2Beta.Areas.Account.Controllers.DetailsController Details = new Fohjin.DDD.MVC2Beta.Areas.Account.Controllers.T4MVC_DetailsController();
+        public Fohjin.DDD.MVC2Beta.Areas.Account.Controllers.TransferController Transfer = new Fohjin.DDD.MVC2Beta.Areas.Account.Controllers.T4MVC_TransferController();
+        public Fohjin.DDD.MVC2Beta.Areas.Account.Controllers.WithdrawalController Withdrawal = new Fohjin.DDD.MVC2Beta.Areas.Account.Controllers.T4MVC_WithdrawalController();
         public T4MVC.Account.SharedController Shared = new T4MVC.Account.SharedController();
     }
     [CompilerGenerated]

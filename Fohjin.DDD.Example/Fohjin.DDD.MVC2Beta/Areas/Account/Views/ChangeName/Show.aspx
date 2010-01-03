@@ -1,4 +1,4 @@
-<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<Fohjin.DDD.Reporting.Dto.ClientReport>" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<Fohjin.DDD.Reporting.Dto.AccountReport>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">
     Change Name
@@ -7,10 +7,10 @@
     <h2>
         Change Name</h2>
     <%=Html.ValidationSummary() %>
-    <% using (Html.BeginForm(MVC.Client.ChangeName.Save(), FormMethod.Post))
+    <% using (Html.BeginForm(MVC.Account.ChangeName.Save(), FormMethod.Post))
        {%>
     <fieldset>
-        <legend>Client Name</legend>
+        <legend>Account Name</legend>
         <%=Html.EditorForModel() %>
         <p>
             <input type="submit" value="Change Name" />
@@ -18,6 +18,6 @@
     </fieldset>
     <% } %>
     <div>
-        <%=Html.ActionLink("Back to List", MVC.Client.List.Show()) %>
+        <%=Html.ActionLink("Cancel", MVC.Account.Details.Show(Model.Id)) %>
     </div>
 </asp:Content>

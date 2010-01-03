@@ -7,11 +7,12 @@ namespace Fohjin.DDD.Reporting.Dto
     public class AccountReport
     {
         [HiddenInput(DisplayValue = false)]
-        public Guid Id { get; private set; }
+        public Guid Id { get; set; }
         [HiddenInput(DisplayValue = false)]
-        public Guid ClientDetailsReportId { get; private set; }
+        public Guid ClientDetailsReportId { get; set; }
         [Required]
-        public string AccountName { get; private set; }
+        public string AccountName { get; set; }
+        [HiddenInput(DisplayValue = false)]
         public string AccountNumber { get; private set; }
 
         public AccountReport(){}

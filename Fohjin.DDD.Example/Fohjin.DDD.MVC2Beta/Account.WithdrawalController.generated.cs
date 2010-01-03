@@ -19,8 +19,8 @@ using System.Web.Routing;
 using T4MVC;
 namespace Fohjin.DDD.MVC2Beta.Areas.Account.Controllers {
     [CompilerGenerated]
-    public partial class ChangeNameController {
-        protected ChangeNameController(Dummy d) { }
+    public partial class WithdrawalController {
+        protected WithdrawalController(Dummy d) { }
 
         protected RedirectToRouteResult RedirectToAction(ActionResult result) {
             var callInfo = (IT4MVCActionResult)result;
@@ -37,7 +37,7 @@ namespace Fohjin.DDD.MVC2Beta.Areas.Account.Controllers {
         }
 
         public readonly string Area = "Account";
-        public readonly string Name = "ChangeName";
+        public readonly string Name = "Withdrawal";
 
         static readonly ActionNames s_actions = new ActionNames();
         public ActionNames Actions { get { return s_actions; } }
@@ -50,13 +50,13 @@ namespace Fohjin.DDD.MVC2Beta.Areas.Account.Controllers {
         static readonly ViewNames s_views = new ViewNames();
         public ViewNames Views { get { return s_views; } }
         public class ViewNames {
-            public readonly string Show = "~/Areas/Account/Views/ChangeName/Show.aspx";
+            public readonly string Show = "~/Areas/Account/Views/Withdrawal/Show.aspx";
         }
     }
 
     [CompilerGenerated]
-    public class T4MVC_ChangeNameController: Fohjin.DDD.MVC2Beta.Areas.Account.Controllers.ChangeNameController {
-        public T4MVC_ChangeNameController() : base(Dummy.Instance) { }
+    public class T4MVC_WithdrawalController: Fohjin.DDD.MVC2Beta.Areas.Account.Controllers.WithdrawalController {
+        public T4MVC_WithdrawalController() : base(Dummy.Instance) { }
 
         public override System.Web.Mvc.ActionResult Show(System.Guid id) {
             var callInfo = new T4MVC_ActionResult(Area, Name, Actions.Show);
@@ -64,9 +64,9 @@ namespace Fohjin.DDD.MVC2Beta.Areas.Account.Controllers {
             return callInfo;
         }
 
-        public override System.Web.Mvc.ActionResult Save(Fohjin.DDD.Reporting.Dto.AccountReport account) {
+        public override System.Web.Mvc.ActionResult Save(Fohjin.DDD.MVC2Beta.Areas.Account.Models.AccountActivityViewModel withdrawal) {
             var callInfo = new T4MVC_ActionResult(Area, Name, Actions.Save);
-            callInfo.RouteValues.Add("account", account);
+            callInfo.RouteValues.Add("withdrawal", withdrawal);
             return callInfo;
         }
 

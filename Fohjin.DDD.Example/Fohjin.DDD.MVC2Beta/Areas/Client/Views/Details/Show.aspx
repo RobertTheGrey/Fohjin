@@ -41,7 +41,8 @@
         <%} %>
     </table>
     </div>
-    <p>
+    <p />
+    <div>
         <%= Html.ActionLink("Change Name", MVC.Client.ChangeName.Show(Model.Id)) %>
         |
         <%= Html.ActionLink("Change Address", MVC.Client.ChangeAddress.Show(Model.Id)) %>
@@ -49,5 +50,7 @@
         <%= Html.ActionLink("Change Phone Number", MVC.Client.ChangePhoneNumber.Show(Model.Id)) %>
         |
         <%=Html.ActionLink("Back to List", MVC.Client.List.Show()) %>
-    </p>
+        |
+        <%=Html.ActionLink("Create an Account", MVC.Account.Create.Show(Model.Id)) %>
+    </div>
 </asp:Content>
